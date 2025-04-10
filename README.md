@@ -1,6 +1,8 @@
 ## 🐣 Projekt v razvoju
 ___
 
+# Z naslednjimi nastavitvami želim doseči nadzor nad maksimalno dovoljeno močjo (kW)!
+
 ![Sprememba dogovorjene moči](https://github.com/user-attachments/assets/f3fd7e9b-f6cb-4a89-8c5b-d751f2365208)
 
 # Pri spremembi dogovorjene moči je potrebno upoštevati pravilo, `da mora biti dogovorjena moč v višjem časovnem bloku enaka ali večja kot v predhodnem`. 
