@@ -659,7 +659,9 @@ Koda za nod:
     }
 ]
 ```
+## 🙌 Zahvale
 
+Hvala družini za potrpežljivost pri testiranjih! 💕
 📅 Zadnja posodobitev: 10.04.2025
 
 
