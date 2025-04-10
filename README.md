@@ -25,6 +25,6 @@ Kako pa so opravili meritve za izračun dogovorjene moči?
 Kot je iz zgornje slike razvidno so vzeli tudi najvišje podatke porabe moči iz leta 2023 kot relevantne!?
 
 ***
-# ⭐ Torej moj namen je ugotoviti v kolikšni meri bi s pomočjo avtomatizacije lahko vplival na znižanje računa, če sploh.
+# ⭐ Torej, moj namen je ugotoviti v kolikšni meri bi s pomočjo avtomatizacije lahko vplival na znižanje računa, če sploh.
 ***
 
