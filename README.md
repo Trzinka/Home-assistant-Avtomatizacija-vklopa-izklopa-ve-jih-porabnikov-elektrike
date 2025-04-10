@@ -1,4 +1,5 @@
 ## 🐣 Projekt v razvoju
+___
 
 ![Sprememba dogovorjene moči](https://github.com/user-attachments/assets/f3fd7e9b-f6cb-4a89-8c5b-d751f2365208)
 
