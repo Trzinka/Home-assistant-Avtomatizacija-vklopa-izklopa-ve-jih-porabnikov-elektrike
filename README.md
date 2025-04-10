@@ -29,7 +29,8 @@ Ne pozabimo, da te opravljene meritve oziroma dogovorjena moč veljajo celo leto
 # ⭐ Torej, moj namen je ugotoviti v kolikšni meri bi s pomočjo avtomatizacije lahko vplival na znižanje računa, če sploh.
 ***
 
-Poglejmo si dva primera:
+Poglejmo si dva primera (moj dobavitelj je `Elektro energija, podjetje za prodajo elektrike in drugih energentov, svetovanje in storitve, d.o.o.`):
+
 Mesec november 2024
 ![2024-11_Stran_2](https://github.com/user-attachments/assets/f3d98f84-52af-4786-965c-378433d64093)
 
