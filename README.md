@@ -294,6 +294,7 @@ Koda za nod:
     }
 ]
 ```
+___
 
 Primer za IR panel (ogrevanje):
 ![IR panel avtomatizacija](https://github.com/user-attachments/assets/ab840934-22f4-42c6-88eb-60aedb920cac)
