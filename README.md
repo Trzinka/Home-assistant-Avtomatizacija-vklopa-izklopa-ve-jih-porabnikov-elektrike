@@ -29,3 +29,10 @@ Ne pozabimo, da te opravljene meritve oziroma dogovorjena moč veljajo celo leto
 # ⭐ Torej, moj namen je ugotoviti v kolikšni meri bi s pomočjo avtomatizacije lahko vplival na znižanje računa, če sploh.
 ***
 
+Poglejmo si dva primera:
+Mesec november 2024
+![2024-11_Stran_2](https://github.com/user-attachments/assets/f3d98f84-52af-4786-965c-378433d64093)
+
+Mesec marec 2025
+![202503_Stran_2](https://github.com/user-attachments/assets/a36743f0-ca2f-4ead-b552-fcfa4c2a3343)
+
