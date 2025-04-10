@@ -23,6 +23,7 @@ Kako pa so opravili meritve za izračun dogovorjene moči?
 ![Meritve za izračun dogovorjene moči](https://github.com/user-attachments/assets/42b03b63-1a09-4ef4-9d03-7386b534ef89)
 
 Kot je iz zgornje slike razvidno so vzeli tudi najvišje podatke porabe moči iz leta 2023 kot relevantne!?
+Ne pozabimo, da te opravljene meritve oziroma dogovorjena moč veljajo celo leto, ki nam ki se ogrevamo (IR paneli) s pomočjo elektrike ne omogoča kaj dosti prilagajanja razen, če to sami zahtevamo!
 
 ***
 # ⭐ Torej, moj namen je ugotoviti v kolikšni meri bi s pomočjo avtomatizacije lahko vplival na znižanje računa, če sploh.
