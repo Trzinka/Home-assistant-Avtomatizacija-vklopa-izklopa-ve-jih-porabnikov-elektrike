@@ -31,7 +31,7 @@ Ne pozabimo, da te opravljene meritve oziroma dogovorjena moč veljajo celo leto
 
 Poglejmo si dva primera (moj dobavitelj je `Elektro energija, podjetje za prodajo elektrike in drugih energentov, svetovanje in storitve, d.o.o.`):
 
-Mesec november 2024
+Mesec november 2024 (Omilitev draginje pri oskrbi z elektriko)
 ![2024-11_Stran_2](https://github.com/user-attachments/assets/f3d98f84-52af-4786-965c-378433d64093)
 
 Mesec marec 2025
