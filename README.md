@@ -1,4 +1,4 @@
-## 🐣 Projekt v razvoju
+### 🐣 Projekt v razvoju
 ___
 
 # Z naslednjimi nastavitvami želim doseči nadzor nad porabo maksimalno dovoljene dogovorjene moči (kW)!
