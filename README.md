@@ -46,7 +46,7 @@ Najprej sem moral rešiti dilemo glede uporabe električne pečice, pralnega str
 Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje bojler se mi dozdeva, da te naprave lahko brez večjega vpliva ob špicah izklapljam.
 
 
-Nekaj podatkov o porabnikih
+# Nekaj podatkov o porabnikih
 ___
 | Naprava        | Poraba |
 |----------------|--------|
