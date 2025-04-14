@@ -680,6 +680,6 @@ Koda za nod:
 ]
 ```
 
-📅 Zadnja posodobitev: 10.04.2025
+📅 Posodobitev: 14.04.2025
 
 
