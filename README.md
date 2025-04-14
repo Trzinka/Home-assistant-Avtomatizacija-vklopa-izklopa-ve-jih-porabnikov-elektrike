@@ -45,6 +45,20 @@ Najprej sem moral rešiti dilemo glede uporabe električne pečice, pralnega str
 
 Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje bojler se mi dozdeva, da te naprave lahko brez večjega vpliva ob špicah izklapljam.
 
+| Naprava        | Poraba |
+|----------------|--------|
+| Sušilni stroj  | 2,4 kW |
+| Pralni stroj   | 1,8 kW |
+| Bojler         | 2,0 kW |
+| Štedilnik      |        |
+| Mikrovalovna   |        |
+| Likalnik       | 2,2 kW |
+| Fen za lase    | 2,4 kW |
+| IR Nati        | 0,6 kW |
+| IR Spalnica    | 1,2 kW |
+| IR Di          | 0,7 kW |
+
+
 ### Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
 Primer za bojler.
