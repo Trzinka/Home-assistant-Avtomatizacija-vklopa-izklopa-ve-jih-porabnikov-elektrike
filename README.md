@@ -61,8 +61,9 @@ ___
 | IR Spalnica    | 1,2 kW |
 | IR Di          | 0,7 kW |
 ___
-
-
+Ugotovil sem, da je nekje stalna poraba okoli 500 W
+![20250414-Floor plan](https://github.com/user-attachments/assets/b1559d97-85c4-457c-8a4b-35c9410fabea)
+___
 ### Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
 Primer za bojler.
