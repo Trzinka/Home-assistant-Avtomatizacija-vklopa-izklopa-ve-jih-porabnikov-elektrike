@@ -45,6 +45,9 @@ Najprej sem moral rešiti dilemo glede uporabe električne pečice, pralnega str
 
 Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje bojler se mi dozdeva, da te naprave lahko brez večjega vpliva ob špicah izklapljam.
 
+
+Nekaj podatkov o porabnikih
+___
 | Naprava        | Poraba |
 |----------------|--------|
 | Sušilni stroj  | 2,4 kW |
@@ -57,6 +60,7 @@ Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje b
 | IR Nati        | 0,6 kW |
 | IR Spalnica    | 1,2 kW |
 | IR Di          | 0,7 kW |
+___
 
 
 ### Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
