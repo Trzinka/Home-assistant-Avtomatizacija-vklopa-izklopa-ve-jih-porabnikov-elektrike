@@ -67,9 +67,9 @@ ___
 ⚡ Stalna poraba! Internet, mrežno stikalo, mrežni tiskalnik, računalnik (Home assistant in Windows `podatkovni strežnik, domači kino, kamere ...` "na Proxmox")
 ![20250414-Poraba energije](https://github.com/user-attachments/assets/d8856e04-517b-45de-a776-7af279de2e97)
 ___
-### Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
+### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
-Primer za bojler.
+💡 Primer za bojler.
 ![20250409-Bioler automation](https://github.com/user-attachments/assets/01e0d399-cc46-4d67-b7e6-06fff2f540c2)
 
 Koda za nod:
@@ -318,7 +318,7 @@ Koda za nod:
 ```
 ___
 
-Primer za IR panel (ogrevanje):
+💡 Primer za IR panel (ogrevanje):
 ![IR panel avtomatizacija](https://github.com/user-attachments/assets/ab840934-22f4-42c6-88eb-60aedb920cac)
 
 Koda za nod:
