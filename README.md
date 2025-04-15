@@ -866,7 +866,7 @@ Torej v mapi `share` in v njeni podmapi `sensors` naredite datoteko `15_minut.ya
   sampling_size: 300
   unique_id: 3ef4acea-93ed-4745-9904-a2b125f4e520
 ```
-z tem ste ustvarili entitete, ki v časovnem obdobju 15 minut izračuna povprečje porabe v W
+s tem ste ustvarili entitete, ki v časovnem obdobju 15 minut izračuna povprečje porabe v W
 
 Sedaj je potrebno v datoteki `template.yaml` v korenskem imeniku vpisati:
 ```yaml
@@ -994,7 +994,8 @@ in še v `automations.yaml`
           - sensor.me_je_pod_klimo_povprecna_moc_15_min
   mode: single
 ```
-s tem ustvarimo entitete v kW, ki jo uporabljam v grafu (zgodovinskem izpisu). Opazili boste, da prikazani podatki niso ravno na 15 minut a so dovolj blizu za uporabo!
+s tem ustvarimo entitete v kW in avtomatizacijo zbiranja na 15 minut, ki jo uporabljam v grafu (zgodovinskem izpisu). 
+Opazili boste, da prikazani podatki niso ravno na 15 minut, a so dovolj blizu za uporabo!
 
 ***
 
