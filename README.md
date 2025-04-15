@@ -78,7 +78,7 @@ Primer poimenovanja entitet:
 | Tm-Sp     | Temperaturni merilnik-Spalnica   |
 
 ___
-## ✨
+### ✨
 ___
 ### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
