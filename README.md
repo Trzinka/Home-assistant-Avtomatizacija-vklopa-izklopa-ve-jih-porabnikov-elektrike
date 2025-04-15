@@ -453,7 +453,7 @@ Koda za nod:
                 "4d0804cc8c72c53b"
             ],
             [
-                "efd06012ca870d20"
+                "46c7910839bd381b"
             ]
         ]
     },
@@ -668,6 +668,51 @@ Koda za nod:
             [
                 "efd06012ca870d20"
             ]
+        ]
+    },
+    {
+        "id": "46c7910839bd381b",
+        "type": "api-current-state",
+        "z": "794794b2e9403922",
+        "name": "Is the IR ON",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "switch.tm_sp",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 690,
+        "y": 240,
+        "wires": [
+            [
+                "efd06012ca870d20"
+            ],
+            []
         ]
     },
     {
