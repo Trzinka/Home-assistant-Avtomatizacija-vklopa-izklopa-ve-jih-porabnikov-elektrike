@@ -745,4 +745,20 @@ ___
 ___
 # 📅 Dodano: 17.04.2025
 
+___
+
+## Nekaj statistike in primerjave
+
+Na spletni strani mojega elektra lahko šele po 3 dneh vidim:
+
+V Home assistant:
+![20250414-Povprečje 15 minut](https://github.com/user-attachments/assets/4e08c265-52c7-46f0-9800-cbc4963675a7)
+
+Da v Home assistant sproti vidim nekaj približno podobnega sem moral narediti nekaj novih entitet:
+***
+
+
+Čeprav bi 15 minutno povprečje moralo izgledati nekaj podobno temu:
+![20250414-Snapshot-Povprečje 15 minut](https://github.com/user-attachments/assets/5d8ee82c-8a1c-4002-b7f0-3ab7df0a71ac)
+
 
