@@ -332,7 +332,8 @@ Koda za nod:
 ___
 
 💡 Primer za IR panel (ogrevanje):
-![IR panel avtomatizacija](https://github.com/user-attachments/assets/ab840934-22f4-42c6-88eb-60aedb920cac)
+![IR spalnica](https://github.com/user-attachments/assets/e9e046ab-fb32-4179-ae87-a3ec67874a66)
+
 
 Koda za nod:
 ```yaml
