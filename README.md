@@ -77,7 +77,7 @@ Primer poimenovanja entitet:
 | Me-Bo     | Merilnik elektrike-Bojler        |
 | Tm-Sp     | Temperaturni merilnik-Spalnica   |
 
-
+___
 ___
 ### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
@@ -694,7 +694,8 @@ Koda za nod:
     }
 ]
 ```
-
+___
+___
 📅 Posodobitev: 14.04.2025
 
 
