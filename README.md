@@ -697,6 +697,6 @@ Koda za nod:
 ```
 ___
 ___
-📅 Posodobitev: 14.04.2025
+# 📅 Dodano: 17.04.2025
 
 
