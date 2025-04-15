@@ -61,7 +61,7 @@ ___
 | IR Spalnica    | 1,2 kW |
 | IR Di          | 0,7 kW |
 ___
-📊 Ugotovil sem, da je nekje stalna poraba okoli 500 W
+📊 Ugotovil sem, da je nekje stalna poraba okoli 500 W (hladilnik, skrinja, tv, glavni računalnik ...) tako, da čisto v skrajnost ne mislim iti!
 ![20250414-Floor plan](https://github.com/user-attachments/assets/b1559d97-85c4-457c-8a4b-35c9410fabea)
 
 ⚡ Oziroma je stalna poraba: Internet, mrežno stikalo, mrežni tiskalnik, računalnik (Home assistant in Windows `podatkovni strežnik, domači kino, kamere ...` "na Proxmox")
