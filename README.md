@@ -61,8 +61,11 @@ ___
 | IR Spalnica    | 1,2 kW |
 | IR Di          | 0,7 kW |
 ___
-Ugotovil sem, da je nekje stalna poraba okoli 500 W
+📊 Ugotovil sem, da je nekje stalna poraba okoli 500 W
 ![20250414-Floor plan](https://github.com/user-attachments/assets/b1559d97-85c4-457c-8a4b-35c9410fabea)
+
+⚡ Stalna poraba! Internet, mrežno stikalo, mrežni tiskalnik, računalnik (Home assistant in Windows `podatkovni strežnik, domači kino, kamere ...` "na Proxmox")
+![20250414-Poraba energije](https://github.com/user-attachments/assets/d8856e04-517b-45de-a776-7af279de2e97)
 ___
 ### Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
