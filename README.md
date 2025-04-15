@@ -85,7 +85,7 @@ ___
 💡 Primer za bojler.
 ![20250409-Bioler automation](https://github.com/user-attachments/assets/01e0d399-cc46-4d67-b7e6-06fff2f540c2)
 
-Koda za nod:
+✍️ Koda za nod: 
 ```yaml
 [
     {
@@ -335,7 +335,7 @@ ___
 ![IR spalnica](https://github.com/user-attachments/assets/e9e046ab-fb32-4179-ae87-a3ec67874a66)
 
 
-Koda za nod:
+✍️ Koda za nod:
 ```yaml
 [
     {
@@ -758,7 +758,7 @@ Da v Home assistant sproti vidim nekaj približno podobnega sem moral narediti n
 
 Če ste do sedaj že spremljali moji objavi https://github.com/Trzinka/Home_Assistant-Obracun_porabe_elektricne_energije_po_novem-2025 in https://github.com/Trzinka/Home_Assistant-Obracun_porabe_elektricne_energije_po_novem-2025_Prikaz_porabe_za_prejsnji_mesec potem poznate strukturo mojega korenskega imenika.
 
-Torej v mapi `share` in v njeni podmapi `sensors` naredite datoteko `15_minut.yaml` in v njo dodajte:
+✍️ Torej v mapi `share` in v njeni podmapi `sensors` naredite datoteko `15_minut.yaml` in v njo dodajte:
 ```yaml
 - platform: statistics
   name: "Povprečna moč (15 min)-skupaj"
@@ -870,7 +870,7 @@ Torej v mapi `share` in v njeni podmapi `sensors` naredite datoteko `15_minut.ya
 ```
 s tem ste ustvarili entitete, ki v časovnem obdobju 15 minut izračuna povprečje porabe v W
 
-Sedaj je potrebno v datoteki `template.yaml` v korenskem imeniku vpisati:
+✍️ Sedaj je potrebno v datoteki `template.yaml` v korenskem imeniku vpisati:
 ```yaml
 - sensor:
   - name: "Povprečna moč 15 min (kW)-Skupaj"
@@ -971,7 +971,7 @@ Sedaj je potrebno v datoteki `template.yaml` v korenskem imeniku vpisati:
     unique_id: 06520c72-9a7f-4743-bcb8-824f10e51595
 ```
 
-in še v `automations.yaml`
+✍️ in še v `automations.yaml`
 ```yaml
 - id: posodobi_15_min_template_senzorje
   alias: Posodobi 15-minutne template senzorje
@@ -1005,7 +1005,7 @@ Opazili boste, da prikazani podatki niso ravno na 15 minut, a so dovolj blizu za
 Čeprav bi 15 minutno povprečje moralo izgledati nekaj podobno temu:
 ![20250414-Snapshot-Povprečje 15 minut](https://github.com/user-attachments/assets/5d8ee82c-8a1c-4002-b7f0-3ab7df0a71ac)
 
-Da bi dobili podatke kot jih prikazuje slika v datoteki `template.yaml` v korenskem imeniku vpišite:
+✍️ Da bi dobili podatke kot jih prikazuje slika v datoteki `template.yaml` v korenskem imeniku vpišite:
 ```yaml
 ##################################################################################################################
 - sensor:
@@ -1106,7 +1106,7 @@ Da bi dobili podatke kot jih prikazuje slika v datoteki `template.yaml` v korens
       {{ states('input_number.snapshot_me_je_pod_klimo_povprecna_moc_15_min') | float(0) }}
 ```
 
-Poleg tega je potrebno v `configuration.yaml` dodati:
+✍️ Poleg tega je potrebno v `configuration.yaml` dodati:
 ```yaml
 input_number:
   snapshot_povprecna_moc_15min_skupaj:
@@ -1194,7 +1194,7 @@ input_number:
     step: 0.01
 ```
 
-in še v `automations.yaml`
+✍️ in še v `automations.yaml`
 ```yaml
 - id: shrani_15_min_snapshot
   alias: Shrani 15-minutni snapshot povprečne moči
