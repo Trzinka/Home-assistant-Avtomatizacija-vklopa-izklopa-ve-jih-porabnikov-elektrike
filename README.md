@@ -749,7 +749,8 @@ ___
 
 ## Nekaj statistike in primerjave
 
-Na spletni strani mojega elektra lahko šele po 3 dneh vidim:
+Na spletni strani mojega elektra lahko po 1 dneh vidim:
+Čakam na podatke!
 
 V Home assistant:
 ![20250414-Povprečje 15 minut](https://github.com/user-attachments/assets/4e08c265-52c7-46f0-9800-cbc4963675a7)
