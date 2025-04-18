@@ -329,6 +329,22 @@ ___
     }
 ]
 ```
+
+Kaj ta tok (flow) dela:
+
+Preveri, če je skupna poraba elektrike manjša ali enaka 4 kW in če je
+se sproži na vsake 5 minut nadaljevanje kjer preveri, 
+preveri, če je stikalo za bojler ugasnjeno in če je
+ga vklopi.
+
+
+Pri preverbi, če je skupna poraba elektrike manjša ali enaka 4 kW in če ni (je višja)
+preveri, če je stikalo bojlerja prižgano in če je
+ugasne stikalo IR panela.
+
+
+Preverbe stanj delam zaradi zapisovanja stanja stanja naprav v podatkovno bazo!
+
 ___
 
 💡 Primer za IR panel (ogrevanje):
