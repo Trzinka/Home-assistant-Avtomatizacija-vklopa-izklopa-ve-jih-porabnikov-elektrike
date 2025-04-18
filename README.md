@@ -741,6 +741,26 @@ ___
     }
 ]
 ```
+
+Kaj ta tok (flow) dela:
+
+Preveri, če je temperatura enaka ali nižja kot 21°C in če je 
+se sproži na vsake 5 minut nadaljevanje kjer preveri, 
+če sta osebi Mojca ali Robert (nova entiteta preko binary_sensor) doma in če je kateri od naju doma
+preveri, če je okno zaprto in če je
+preveri, če so vrata zaprta in če so
+preveri, če je skupna poraba elektrike manjša ali enaka 4 kW in če je
+preveri, če je stikalo za IR panele ugasnjeno in če je
+ga vklopi.
+
+Pri preveri, če je skupna poraba elektrike manjša ali enaka 4 kW in če ni preveri če je stikalo bojlerja vklopljeno in če je
+izklopi bojler.
+
+Pri preverbi, če je temperatura enaka ali nižja kot 21°C in če ni (je višja)
+preveri, če je stikalo IR panela prižgano in če je
+ugasne stikalo IR panela.
+
+Preverbe stanj naprav delam zaradi zapisovanja stanja naprav v podatkovno bazo, ki se ob preverbi ne zapisujejo!
 ___
 ___
 # 📅 Dodano: 17.04.2025
