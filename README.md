@@ -359,8 +359,8 @@ ___
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 1400,
-        "y": 60,
+        "x": 960,
+        "y": 80,
         "wires": [
             []
         ]
@@ -386,8 +386,8 @@ ___
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 1410,
-        "y": 240,
+        "x": 970,
+        "y": 440,
         "wires": [
             []
         ]
@@ -448,7 +448,7 @@ ___
             }
         ],
         "x": 50,
-        "y": 220,
+        "y": 420,
         "wires": [
             [
                 "4d0804cc8c72c53b"
@@ -494,8 +494,8 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 670,
-        "y": 120,
+        "x": 130,
+        "y": 240,
         "wires": [
             [
                 "e3fa297a3f3184f0"
@@ -541,8 +541,8 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 460,
-        "y": 160,
+        "x": 140,
+        "y": 300,
         "wires": [
             [
                 "bc8282dc1efe125d"
@@ -569,8 +569,8 @@ ___
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 220,
-        "y": 200,
+        "x": 140,
+        "y": 360,
         "wires": [
             [
                 "1305d4da03553159"
@@ -613,8 +613,8 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 860,
-        "y": 100,
+        "x": 120,
+        "y": 180,
         "wires": [
             [
                 "97a1142e22460697"
@@ -660,14 +660,14 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 1080,
-        "y": 80,
+        "x": 160,
+        "y": 120,
         "wires": [
             [
-                "3d32adea2c4c7661"
+                "080dbc2779d63241"
             ],
             [
-                "efd06012ca870d20"
+                "793b093121567302"
             ]
         ]
     },
@@ -707,11 +707,123 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 690,
+        "x": 470,
+        "y": 440,
+        "wires": [
+            [
+                "efd06012ca870d20"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "793b093121567302",
+        "type": "api-current-state",
+        "z": "794794b2e9403922",
+        "name": "Is the boiler ON",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "switch.me_bo",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 440,
+        "y": 180,
+        "wires": [
+            [
+                "c284372eba11273f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c284372eba11273f",
+        "type": "api-call-service",
+        "z": "794794b2e9403922",
+        "name": "Turn OFF Boiler",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "domain": "switch",
+        "service": "turn_off",
+        "entityId": [
+            "switch.me_bo"
+        ],
+        "data": "{}",
+        "dataType": "json",
+        "x": 640,
         "y": 240,
         "wires": [
             [
                 "efd06012ca870d20"
+            ]
+        ]
+    },
+    {
+        "id": "080dbc2779d63241",
+        "type": "api-current-state",
+        "z": "794794b2e9403922",
+        "name": "Is the IR OFF",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "off",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "switch.tm_sp",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 580,
+        "y": 100,
+        "wires": [
+            [
+                "3d32adea2c4c7661"
             ],
             []
         ]
