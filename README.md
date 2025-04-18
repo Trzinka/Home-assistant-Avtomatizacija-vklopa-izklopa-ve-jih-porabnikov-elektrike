@@ -332,7 +332,8 @@ ___
 ___
 
 💡 Primer za IR panel (ogrevanje):
-![IR spalnica](https://github.com/user-attachments/assets/e9e046ab-fb32-4179-ae87-a3ec67874a66)
+
+![20250418-Nod-red-IR spalnica](https://github.com/user-attachments/assets/3f6276c8-76b8-43de-b52e-f3c29cea8a2f)
 
 
 ✍️ Koda za nod:
