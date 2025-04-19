@@ -1439,3 +1439,542 @@ Pralni stroj (Me-Ps) belo perilo:
 
 Sušilni stroj (Me-Ss):
 ![Sušilni stroj-Poraba](https://github.com/user-attachments/assets/cdeb01aa-58e2-4df0-8f5f-9fe5e89ee58b)
+
+***
+
+Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem zaradi bolj robustnega nadzora:
+![Nod red za pralni in sušilni stroj](https://github.com/user-attachments/assets/93a388e9-5a0c-4904-9ddb-2ebadc206530)
+
+Koda za pralni stroj:
+```yaml
+[
+    {
+        "id": "30459f5f562c8a1f",
+        "type": "server-state-changed",
+        "z": "b98142f5dd0202f2",
+        "name": "Total consumption, less than or equal to 4,5 kW",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.p1_meter_power_phase_3",
+        "entityidfiltertype": "exact",
+        "outputinitially": false,
+        "state_type": "num",
+        "haltifstate": "4500",
+        "halt_if_type": "num",
+        "halt_if_compare": "lte",
+        "outputs": 2,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [],
+        "x": 180,
+        "y": 260,
+        "wires": [
+            [
+                "989138568c271c9e"
+            ],
+            [
+                "check_if_active"
+            ]
+        ]
+    },
+    {
+        "id": "989138568c271c9e",
+        "type": "delay",
+        "z": "b98142f5dd0202f2",
+        "name": "1 X every 5 minutes",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "5",
+        "rateUnits": "minute",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 500,
+        "y": 220,
+        "wires": [
+            [
+                "74ff7b555bb27d6b"
+            ]
+        ]
+    },
+    {
+        "id": "e2f3e046d780ab64",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Turn ON washing machine",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_on",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [
+            "switch.me_ps"
+        ],
+        "data": "{}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1060,
+        "y": 220,
+        "wires": [
+            [
+                "6a3ff3d60fbbf0a0",
+                "5adf39a56fa914e4"
+            ]
+        ]
+    },
+    {
+        "id": "0e4fa37bc7717492",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Turn OFF washing machine",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_off",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [
+            "switch.me_ps"
+        ],
+        "data": "{}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1060,
+        "y": 340,
+        "wires": [
+            [
+                "4225377457d7fddd",
+                "00a66e801b6831d9"
+            ]
+        ]
+    },
+    {
+        "id": "141e0719bc237fc3",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Is the washing machine ON",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "on",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "switch.me_ps",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 800,
+        "y": 340,
+        "wires": [
+            [
+                "0e4fa37bc7717492"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "74ff7b555bb27d6b",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Is the washing machine OFF",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "off",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "switch.me_ps",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entity"
+            }
+        ],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 760,
+        "y": 220,
+        "wires": [
+            [
+                "e2f3e046d780ab64"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "check_if_active",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Is power greater than 120 W?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "120",
+        "halt_if_type": "num",
+        "halt_if_compare": "gt",
+        "entity_id": "sensor.me_prst_current_consumption",
+        "state_type": "num",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "",
+        "forType": "num",
+        "x": 530,
+        "y": 340,
+        "wires": [
+            [
+                "141e0719bc237fc3"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6a3ff3d60fbbf0a0",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 1300,
+        "y": 200,
+        "wires": [
+            [
+                "f4bbd27d70ab2a1e"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "f4bbd27d70ab2a1e",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1520,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5adf39a56fa914e4",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 1310,
+        "y": 260,
+        "wires": [
+            [
+                "109f8e3feaaaa397"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "109f8e3feaaaa397",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Pošlji Robert obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_robert_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1520,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4225377457d7fddd",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 1300,
+        "y": 320,
+        "wires": [
+            [
+                "5ae4466a9e3b074c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "5ae4466a9e3b074c",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1520,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "00a66e801b6831d9",
+        "type": "api-current-state",
+        "z": "b98142f5dd0202f2",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 1310,
+        "y": 380,
+        "wires": [
+            [
+                "4412586dfb1ffdbf"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "4412586dfb1ffdbf",
+        "type": "api-call-service",
+        "z": "b98142f5dd0202f2",
+        "name": "Pošlji Robert obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_robert_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1520,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1bb6c32c123dcb29",
+        "type": "inject",
+        "z": "b98142f5dd0202f2",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1100,
+        "y": 400,
+        "wires": [
+            [
+                "00a66e801b6831d9"
+            ]
+        ]
+    },
+    {
+        "id": "5f28286e.ae6338",
+        "type": "server",
+        "name": "Home Assistant",
+        "version": 5,
+        "addon": true,
+        "rejectUnauthorizedCerts": true,
+        "ha_boolean": "y|yes|true|on|home|open",
+        "connectionDelay": true,
+        "cacheJson": true,
+        "heartbeat": false,
+        "heartbeatInterval": 30,
+        "areaSelector": "friendlyName",
+        "deviceSelector": "friendlyName",
+        "entitySelector": "friendlyName",
+        "statusSeparator": "at: ",
+        "statusYear": "hidden",
+        "statusMonth": "short",
+        "statusDay": "numeric",
+        "statusHourCycle": "h23",
+        "statusTimeFormat": "h:m",
+        "enableGlobalContextStore": true
+    }
+]
+```
