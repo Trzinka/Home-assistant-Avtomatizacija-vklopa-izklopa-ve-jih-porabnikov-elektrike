@@ -1978,3 +1978,20 @@ Koda za pralni stroj:
     }
 ]
 ```
+
+Kaj ta tok (flow) dela:
+
+Preveri, če je skupna poraba elektrike manjša ali enaka 4.5 kW in če je 
+se sproži na vsake 5 minut nadaljevanje kjer 
+preveri, če je stikalo za pralni stroj ugasnjeno in če je 
+ga vklopi
+ko ga vklopi (pogoj) preveri, če sva z ženo doma in če je pogoj izpolnjen
+pošlje sporočilo "Pralni stroj se je ponovno vklopil. Preveri stanje." na mobitel (na mobilnem aparatu morate imeti nameščen Home assistant companion APP, da zadeva deluje), ker je potrebno na stroju ročno pritisniti gumb za nadaljevanje.
+
+Pri preverbi, če je skupna poraba elektrike manjša ali enaka 4.5 kW in če ni (je višja) preveri, 
+če je poraba pralnega stroja večja kot 120 W in če je
+preveri, če je stikalo pralnega stroja prižgano in če je ugasne stikalo pralnega stroja
+ko ga izklopi (pogoj) preveri, če sva z ženo doma in če je pogoj izpolnjen
+pošlje sporočilo "Pralni stroj se je IZKLOPIL. Prekoračena poraba" na mobitel (na mobilnem aparatu morate imeti nameščen Home assistant companion APP, da zadeva deluje).
+
+Preverbe stanj delam zaradi zapisovanja stanja stanja naprav v podatkovno bazo!
