@@ -1425,4 +1425,17 @@ input_number:
         value: "{{ states('sensor.me_je_pod_klimo_povprecna_moc_15_min') | float(0) }}"
   mode: single
 ```
- 
+
+***
+
+# 📅 Dodano: 19.04.2025
+
+Poglejmo porabo pralnega stroja (Me-Ps) in sušilnega stroja (Me-Ss):
+![20250407-Pralni+Sušilni stroj](https://github.com/user-attachments/assets/c604a964-b618-4238-a35a-8e9dd51487e8)
+Prvo je prano belo perilo in nato sušeno zatem je prano pisano perilo in zatemm sušeno.
+
+Pralni stroj (Me-Ps) belo perilo:
+![Pralni stroj-Poraba_90](https://github.com/user-attachments/assets/1dff5deb-5487-4282-99c3-9eb0e13c45a8)
+
+Sušilni stroj (Me-Ss):
+![Sušilni stroj-Poraba](https://github.com/user-attachments/assets/cdeb01aa-58e2-4df0-8f5f-9fe5e89ee58b)
