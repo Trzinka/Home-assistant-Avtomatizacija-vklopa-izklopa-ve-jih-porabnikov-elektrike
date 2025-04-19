@@ -333,17 +333,15 @@ ___
 Kaj ta tok (flow) dela:
 
 Preveri, če je skupna poraba elektrike manjša ali enaka 4 kW in če je
-se sproži na vsake 5 minut nadaljevanje kjer preveri, 
+se sproži na vsake 5 minut nadaljevanje kjer  
 preveri, če je stikalo za bojler ugasnjeno in če je
 ga vklopi.
 
-
 Pri preverbi, če je skupna poraba elektrike manjša ali enaka 4 kW in če ni (je višja)
 preveri, če je stikalo bojlerja prižgano in če je
-ugasne stikalo IR panela.
+ugasne stikalo bojlerja.
 
-
-Preverbe stanj delam zaradi zapisovanja stanja stanja naprav v podatkovno bazo!
+Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
 
 ___
 
@@ -1994,4 +1992,4 @@ preveri, če je stikalo pralnega stroja prižgano in če je ugasne stikalo praln
 ko ga izklopi (pogoj) preveri, če sva z ženo doma in če je pogoj izpolnjen
 pošlje sporočilo "Pralni stroj se je IZKLOPIL. Prekoračena poraba" na mobitel (na mobilnem aparatu morate imeti nameščen Home assistant companion APP, da zadeva deluje).
 
-Preverbe stanj delam zaradi zapisovanja stanja stanja naprav v podatkovno bazo!
+Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
