@@ -2002,6 +2002,6 @@ Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
 
 # 📅 Dodano: 20.04.2025
 
-Takđen je izgled porabe:
+Takšen je izgled porabe:
 ![Poraba od 14 do 20 04 2025](https://github.com/user-attachments/assets/f8a83c1c-ffaf-4ffa-8a8d-c225ce593639)
 
