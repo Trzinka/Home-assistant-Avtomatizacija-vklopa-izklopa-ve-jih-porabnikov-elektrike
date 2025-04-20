@@ -897,7 +897,8 @@ ___
 ## Nekaj statistike in primerjave
 
 Na spletni strani mojega elektra lahko po 1 dneh vidim:
-Čakam na podatke!
+![20250414-Povprečje 15 minut-ELEKTRO](https://github.com/user-attachments/assets/c7fec68a-ef59-4c2a-b494-2ce900f5d769)
+
 
 V Home assistant:
 ![20250414-Povprečje 15 minut](https://github.com/user-attachments/assets/4e08c265-52c7-46f0-9800-cbc4963675a7)
@@ -1150,7 +1151,7 @@ Opazili boste, da prikazani podatki niso ravno na 15 minut, a so dovolj blizu za
 ***
 
 
-Čeprav bi 15 minutno povprečje moralo izgledati nekaj podobno temu:
+## 🧐 Čeprav bi 15 minutno povprečje moralo izgledati nekaj podobno temu, ker se primerjalni rezultat z Elektrom najbolj približa:
 ![20250414-Snapshot-Povprečje 15 minut](https://github.com/user-attachments/assets/5d8ee82c-8a1c-4002-b7f0-3ab7df0a71ac)
 
 ✍️ Da bi dobili podatke kot jih prikazuje zgornja slika v datoteki `template.yaml` v korenskem imeniku vpišite:
