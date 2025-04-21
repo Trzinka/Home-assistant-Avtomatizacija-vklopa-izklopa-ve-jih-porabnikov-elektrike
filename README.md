@@ -50,7 +50,7 @@ Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje b
 ___
 | Naprava        | Poraba |
 |----------------|--------|
-| Sušilni stroj  | 2,4 kW |
+| Sušilni stroj  | 2,5 kW |
 | Pralni stroj   | 1,8 kW |
 | Bojler         | 2,0 kW |
 | Štedilnik      |        |
