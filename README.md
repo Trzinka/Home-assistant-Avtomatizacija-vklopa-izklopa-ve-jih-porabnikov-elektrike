@@ -82,17 +82,90 @@ ___
 ___
 ### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
+# 📅 Popravljeno: 05.05.2025
 💡 Primer za bojler.
-![20250409-Bioler automation](https://github.com/user-attachments/assets/01e0d399-cc46-4d67-b7e6-06fff2f540c2)
+![Node red-Bojler](https://github.com/user-attachments/assets/1c393111-44a1-4e29-852a-b0719d9cf955)
+
 
 ✍️ Koda za nod: 
 ```yaml
 [
     {
-        "id": "4cbb8938f808bb5e",
+        "id": "88ea0246d87f31ef",
+        "type": "tab",
+        "label": "Bojler",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e18afdd2b2a80835",
         "type": "server-state-changed",
-        "z": "b98142f5dd0202f2",
-        "name": "Total consumption, less than or equal to 4 kW",
+        "z": "88ea0246d87f31ef",
+        "name": "Me-Bo-Current consumption <= 2,01 kW",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.me_bo_current_consumption",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 160,
+        "y": 40,
+        "wires": [
+            [
+                "24f47e3291fa445d"
+            ]
+        ]
+    },
+    {
+        "id": "cfe5da23c6543707",
+        "type": "server-state-changed",
+        "z": "88ea0246d87f31ef",
+        "name": "Phase 3-Current consumption <= 2,64 kW",
         "server": "5f28286e.ae6338",
         "version": 4,
         "exposeToHomeAssistant": false,
@@ -108,12 +181,12 @@ ___
         ],
         "entityidfilter": "sensor.p1_meter_power_phase_3",
         "entityidfiltertype": "exact",
-        "outputinitially": false,
-        "state_type": "num",
-        "haltifstate": "4000",
-        "halt_if_type": "num",
-        "halt_if_compare": "lte",
-        "outputs": 2,
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
         "output_only_on_state_change": true,
         "for": "0",
         "forType": "num",
@@ -123,22 +196,61 @@ ___
         "ignorePrevStateUnavailable": false,
         "ignoreCurrentStateUnknown": false,
         "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [],
-        "x": 170,
-        "y": 60,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 160,
+        "y": 100,
         "wires": [
             [
-                "2714d185e9b1a5e8"
-            ],
-            [
-                "884081337fdfd3af"
+                "24f47e3291fa445d"
             ]
         ]
     },
     {
-        "id": "2714d185e9b1a5e8",
+        "id": "24f47e3291fa445d",
+        "type": "function",
+        "z": "88ea0246d87f31ef",
+        "name": "function",
+        "func": "// === VHODNI PODATKI ===\nconst currentValue = parseFloat(msg.payload);\nconst topic = msg.topic;\n\n// Shranjevanje vrednosti\nif (topic === 'sensor.me_bo_current_consumption') {\n    global.set('mebo', currentValue);\n    global.set('boilerPower', currentValue);\n} else if (topic === 'sensor.p1_meter_power_phase_3') {\n    global.set('phase3', currentValue);\n} else if (topic === 'switch.me_bo') {\n    global.set('boilerSwitchState', msg.payload);\n}\n\n// === INTERNI PARAMETRI ===\nconst mebo = parseFloat(global.get('mebo') || 0);\nconst phase3 = parseFloat(global.get('phase3') || 0);\nconst boilerSwitchState = global.get('boilerSwitchState') || 'off';\n\n// Določanje statusa\nlet boilerStatus;\nif (boilerSwitchState === 'off') {\n    boilerStatus = 'off';\n} else {\n    boilerStatus = mebo > 100 ? 'AKTIVEN' : 'neaktiven';\n}\nglobal.set('boilerState', boilerStatus);\n\n// === DEBUG ===\nnode.warn(`♨️ \nStikalo: ${boilerSwitchState}  \nPoraba: ${mebo}W  \nStatus: ${boilerStatus}  \nPhase3: ${phase3}W`);\n\n// === LOGIKA ===\nif (phase3 <= 2100 && boilerSwitchState === 'off') {\n    node.warn('✅ VKLOP BOJLERJA (pogoji izpolnjeni)');\n    return [{ payload: \"on\" }, null];\n} else if (phase3 > 4650 && boilerSwitchState === 'on') {\n    node.warn('⛔ IZKLOP BOJLERJA (presežena moč)');\n    return [null, { payload: \"off\" }];\n}\n\nreturn [null, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 100,
+        "wires": [
+            [
+                "4e2336384af3ac68"
+            ],
+            [
+                "f0f3ddd2d18f08fc"
+            ]
+        ]
+    },
+    {
+        "id": "4e2336384af3ac68",
         "type": "delay",
-        "z": "b98142f5dd0202f2",
+        "z": "88ea0246d87f31ef",
         "name": "1 X every 5 minutes",
         "pauseType": "rate",
         "timeout": "5",
@@ -152,18 +264,18 @@ ___
         "drop": true,
         "allowrate": false,
         "outputs": 1,
-        "x": 500,
-        "y": 40,
+        "x": 628.8923606872559,
+        "y": 62.90277099609375,
         "wires": [
             [
-                "2a4203c12b093c8d"
+                "84c8c6492cb278ec"
             ]
         ]
     },
     {
-        "id": "db18dd2777e3cc01",
+        "id": "c9c9a142c074d938",
         "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
+        "z": "88ea0246d87f31ef",
         "name": "Turn ON Boiler",
         "server": "5f28286e.ae6338",
         "version": 5,
@@ -181,16 +293,16 @@ ___
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 960,
-        "y": 40,
+        "x": 1028.8923606872559,
+        "y": 42.90277099609375,
         "wires": [
             []
         ]
     },
     {
-        "id": "d86bec24d2daf958",
+        "id": "ef8254e039891324",
         "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
+        "z": "88ea0246d87f31ef",
         "name": "Turn OFF Boiler",
         "server": "5f28286e.ae6338",
         "version": 5,
@@ -208,16 +320,16 @@ ___
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 960,
-        "y": 120,
+        "x": 1028.8923606872559,
+        "y": 122.90277099609375,
         "wires": [
             []
         ]
     },
     {
-        "id": "884081337fdfd3af",
+        "id": "f0f3ddd2d18f08fc",
         "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
+        "z": "88ea0246d87f31ef",
         "name": "Is the boiler ON",
         "server": "5f28286e.ae6338",
         "version": 3,
@@ -250,19 +362,19 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 620,
-        "y": 100,
+        "x": 728.8923606872559,
+        "y": 122.90277099609375,
         "wires": [
             [
-                "d86bec24d2daf958"
+                "ef8254e039891324"
             ],
             []
         ]
     },
     {
-        "id": "2a4203c12b093c8d",
+        "id": "84c8c6492cb278ec",
         "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
+        "z": "88ea0246d87f31ef",
         "name": "Is the boiler OFF",
         "server": "5f28286e.ae6338",
         "version": 3,
@@ -295,13 +407,76 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 730,
-        "y": 40,
+        "x": 838.8923606872559,
+        "y": 62.90277099609375,
         "wires": [
             [
-                "db18dd2777e3cc01"
+                "c9c9a142c074d938"
             ],
             []
+        ]
+    },
+    {
+        "id": "dodaten_node_id",
+        "type": "server-state-changed",
+        "z": "88ea0246d87f31ef",
+        "name": "Sprememba stanja stikala bojlerja",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "switch.me_bo",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": true,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 130,
+        "y": 160,
+        "wires": [
+            [
+                "24f47e3291fa445d"
+            ]
         ]
     },
     {
@@ -345,45 +520,28 @@ Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
 
 ___
 
+# 📅 Popravljeno: 05.05.2025
 💡 Primer za IR panel (ogrevanje):
 
-![20250418-Nod-red-IR spalnica](https://github.com/user-attachments/assets/3f6276c8-76b8-43de-b52e-f3c29cea8a2f)
+![Node red-Bojler](https://github.com/user-attachments/assets/159b183d-d2ea-4503-b0a8-c3e34b9eac52)
+
 
 
 ✍️ Koda za nod:
 ```yaml
 [
     {
-        "id": "3d32adea2c4c7661",
-        "type": "api-call-service",
-        "z": "794794b2e9403922",
-        "name": "Turn ON IR heating panel-Bedroom",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "switch",
-        "service": "turn_on",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [
-            "switch.tm_sp"
-        ],
-        "data": "{}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 960,
-        "y": 80,
-        "wires": [
-            []
-        ]
+        "id": "0e96811211eede05",
+        "type": "tab",
+        "label": "IR-Sp",
+        "disabled": false,
+        "info": "",
+        "env": []
     },
     {
-        "id": "efd06012ca870d20",
+        "id": "7f13a1260e8a8079",
         "type": "api-call-service",
-        "z": "794794b2e9403922",
+        "z": "0e96811211eede05",
         "name": "Turn OFF IR heating panel-Bedroom",
         "server": "5f28286e.ae6338",
         "version": 5,
@@ -402,15 +560,15 @@ ___
         "outputProperties": [],
         "queue": "none",
         "x": 970,
-        "y": 440,
+        "y": 320,
         "wires": [
             []
         ]
     },
     {
-        "id": "96a9dfdfcc4877d4",
+        "id": "2bf65c06b2fc6d14",
         "type": "server-state-changed",
-        "z": "794794b2e9403922",
+        "z": "0e96811211eede05",
         "name": "<= 21 C",
         "server": "5f28286e.ae6338",
         "version": 4,
@@ -429,11 +587,11 @@ ___
         "entityidfiltertype": "exact",
         "outputinitially": true,
         "state_type": "str",
-        "haltifstate": "21",
+        "haltifstate": "",
         "halt_if_type": "num",
-        "halt_if_compare": "lte",
-        "outputs": 2,
-        "output_only_on_state_change": true,
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
         "for": "0",
         "forType": "num",
         "forUnits": "minutes",
@@ -462,234 +620,18 @@ ___
                 "valueType": "triggerId"
             }
         ],
-        "x": 50,
-        "y": 420,
+        "x": 270,
+        "y": 280,
         "wires": [
             [
-                "4d0804cc8c72c53b"
-            ],
-            [
-                "46c7910839bd381b"
+                "2eca172c43e73869"
             ]
         ]
     },
     {
-        "id": "bc8282dc1efe125d",
+        "id": "92288ecab2972196",
         "type": "api-current-state",
-        "z": "794794b2e9403922",
-        "name": "Window OFF/ON",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "closed",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "sensor.so_sp_st",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 130,
-        "y": 240,
-        "wires": [
-            [
-                "e3fa297a3f3184f0"
-            ],
-            [
-                "efd06012ca870d20"
-            ]
-        ]
-    },
-    {
-        "id": "1305d4da03553159",
-        "type": "api-current-state",
-        "z": "794794b2e9403922",
-        "name": "Robert or Mojca home",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "binary_sensor.tpl_occupancy",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 140,
-        "y": 300,
-        "wires": [
-            [
-                "bc8282dc1efe125d"
-            ],
-            [
-                "efd06012ca870d20"
-            ]
-        ]
-    },
-    {
-        "id": "4d0804cc8c72c53b",
-        "type": "delay",
-        "z": "794794b2e9403922",
-        "name": "1 X every 5 minutes",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "5",
-        "rateUnits": "minute",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 140,
-        "y": 360,
-        "wires": [
-            [
-                "1305d4da03553159"
-            ]
-        ]
-    },
-    {
-        "id": "e3fa297a3f3184f0",
-        "type": "api-current-state",
-        "z": "794794b2e9403922",
-        "name": "Door OFF/ON",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "off",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "binary_sensor.sv_sp_door",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 120,
-        "y": 180,
-        "wires": [
-            [
-                "97a1142e22460697"
-            ],
-            [
-                "efd06012ca870d20"
-            ]
-        ]
-    },
-    {
-        "id": "97a1142e22460697",
-        "type": "api-current-state",
-        "z": "794794b2e9403922",
-        "name": "Total consumption <= 4 kW",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "4000",
-        "halt_if_type": "num",
-        "halt_if_compare": "lte",
-        "entity_id": "sensor.p1_meter_power_phase_3",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 160,
-        "y": 120,
-        "wires": [
-            [
-                "080dbc2779d63241"
-            ],
-            [
-                "793b093121567302"
-            ]
-        ]
-    },
-    {
-        "id": "46c7910839bd381b",
-        "type": "api-current-state",
-        "z": "794794b2e9403922",
+        "z": "0e96811211eede05",
         "name": "Is the IR ON",
         "server": "5f28286e.ae6338",
         "version": 3,
@@ -722,86 +664,46 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 470,
-        "y": 440,
+        "x": 790,
+        "y": 260,
         "wires": [
             [
-                "efd06012ca870d20"
+                "7f13a1260e8a8079"
             ],
             []
         ]
     },
     {
-        "id": "793b093121567302",
-        "type": "api-current-state",
-        "z": "794794b2e9403922",
-        "name": "Is the boiler ON",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "switch.me_bo",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 440,
-        "y": 180,
-        "wires": [
-            [
-                "c284372eba11273f"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "c284372eba11273f",
+        "id": "d36f2689478774da",
         "type": "api-call-service",
-        "z": "794794b2e9403922",
-        "name": "Turn OFF Boiler",
+        "z": "0e96811211eede05",
+        "name": "Turn ON IR heating panel-Bedroom",
         "server": "5f28286e.ae6338",
         "version": 5,
+        "debugenabled": false,
         "domain": "switch",
-        "service": "turn_off",
+        "service": "turn_on",
+        "areaId": [],
+        "deviceId": [],
         "entityId": [
-            "switch.me_bo"
+            "switch.tm_sp"
         ],
         "data": "{}",
         "dataType": "json",
-        "x": 640,
-        "y": 240,
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 980,
+        "y": 80,
         "wires": [
-            [
-                "efd06012ca870d20"
-            ]
+            []
         ]
     },
     {
-        "id": "080dbc2779d63241",
+        "id": "f46649d98acfa8eb",
         "type": "api-current-state",
-        "z": "794794b2e9403922",
+        "z": "0e96811211eede05",
         "name": "Is the IR OFF",
         "server": "5f28286e.ae6338",
         "version": 3,
@@ -834,13 +736,439 @@ ___
         "override_payload": "msg",
         "entity_location": "data",
         "override_data": "msg",
-        "x": 580,
+        "x": 880,
+        "y": 140,
+        "wires": [
+            [
+                "d36f2689478774da"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "50f8b8208c1817f1",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Robert or Mojca home",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "binary_sensor.tpl_occupancy",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 220,
+        "y": 220,
+        "wires": [
+            [
+                "2eca172c43e73869"
+            ]
+        ]
+    },
+    {
+        "id": "859ca23e69522152",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Window OFF/ON",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.so_sp_st",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 240,
+        "y": 160,
+        "wires": [
+            [
+                "2eca172c43e73869"
+            ]
+        ]
+    },
+    {
+        "id": "ceb47b291656fe70",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Door OFF/ON",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "binary_sensor.sv_sp_door",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 250,
         "y": 100,
         "wires": [
             [
-                "3d32adea2c4c7661"
+                "2eca172c43e73869"
+            ]
+        ]
+    },
+    {
+        "id": "cf5ff828e4d9e6ef",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Fase 3-Curent consumption <= 3,4 kW",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.p1_meter_power_phase_3",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 170,
+        "y": 40,
+        "wires": [
+            [
+                "2eca172c43e73869"
+            ]
+        ]
+    },
+    {
+        "id": "2eca172c43e73869",
+        "type": "function",
+        "z": "0e96811211eede05",
+        "name": "IR spalnica Logika",
+        "func": "// === VHODNI PODATKI ===\nconst currentValue = parseFloat(msg.payload);\nconst topic = msg.topic;\n\n// Shranjevanje vrednosti GLOBALNO\nif (topic === 'sensor.tm_sp_current_consumption') {\n    global.set('irPoraba_sp', currentValue);  // Poraba IR panelov v spalnici\n} else if (topic === 'sensor.p1_meter_power_phase_3') {\n    global.set('phase3', currentValue);      // Celotna poraba faze 3\n} else if (topic === 'sensor.povprecje_temperature_spalnica') {\n    global.set('temp_sp', currentValue);     // Temperatura v spalnici\n} else if (topic === 'binary_sensor.tpl_occupancy') {\n    global.set('prisotnost_sp', msg.payload === 'on'); // Prisotnost v spalnici\n} else if (topic === 'sensor.so_sp_st') {\n    global.set('okno_sp', msg.payload === 'closed');   // Stanje oken\n} else if (topic === 'binary_sensor.sv_sp_door') {\n    global.set('vrata_sp', msg.payload === 'off');     // Stanje vrat\n} else if (topic === 'switch.tm_sp') {\n    global.set('irSwitchState_sp', msg.payload);       // Stanje stikala IR\n}\n\n// === INTERNI PARAMETRI ===\nconst irPorabaSp = parseFloat(global.get('irPoraba_sp') || 0);\nconst phase3 = parseFloat(global.get('phase3') || 0);\nconst temperaturaSp = parseFloat(global.get('temp_sp') || 0);\nconst prisotnostSp = global.get('prisotnost_sp') || false;\nconst oknoZaprtoSp = global.get('okno_sp') || false;\nconst vrataZaprtaSp = global.get('vrata_sp') || false;\nconst irSwitchStateSp = global.get('irSwitchState_sp') || 'off';\n\n// Globalni parametri bojlerja (iz drugega flowa)\nconst boilerSwitchState = global.get('boilerSwitchState') || 'off';\nconst boilerPower = parseFloat(global.get('boilerPower') || 0);\nconst boilerState = boilerSwitchState === 'on' ? \n                   (boilerPower > 100 ? 'AKTIVEN' : 'neaktiven') : 'off';\n\n// Določanje statusa IR\nlet irStatus;\nif (irSwitchStateSp === 'off') {\n    irStatus = 'off';\n} else {\n    irStatus = irPorabaSp > 100 ? 'AKTIVEN' : 'neaktiven';\n}\nglobal.set('irState_sp', irStatus);\n\n// === VIZUALNI DEBUG IZPIS ===\nnode.warn(`📊 \n┏\n┃ 𝗧𝗲𝗺𝗽.: ${temperaturaSp}°C ${temperaturaSp <= 21 ? '✅' : '❌'} (meja: 21°C)\n┃ 𝗣𝗿𝗶𝘀𝗼𝘁𝗻𝗼𝘀𝘁: ${prisotnostSp ? 'da ✅' : 'NE ❌'}\n┃ 𝗢𝗸𝗻𝗼: ${oknoZaprtoSp ? 'zaprto ✅' : 'ODPRTO ❌'}\n┃ 𝗩𝗿𝗮𝘁𝗮: ${vrataZaprtaSp ? 'zaprta ✅' : 'ODPRTO ❌'}\n┃ 𝗖𝗲𝗹𝗼𝘁𝗻𝗮 𝗽𝗼𝗿𝗮𝗯𝗮: ${phase3}W\n┃ 𝗜𝗥 𝗽𝗼𝗿𝗮𝗯𝗮: ${irPorabaSp}W ${irPorabaSp > 100 ? '🔴 AKTIVEN' : '🟢 neaktiven'}\n┃ 𝗕𝗼𝗷𝗹𝗲𝗿: ${boilerState}\n┗`);\n\n// === GLAVNA LOGIKA ===\nconst pogojiIR = temperaturaSp <= 21 && prisotnostSp && oknoZaprtoSp && vrataZaprtaSp;\nconst irJeVklopljen = irStatus === 'AKTIVEN';\n\n// 1. Pogoji za vklop IR\nif (pogojiIR && !irJeVklopljen && phase3 <= 3400) {\n    const predvidenaPoraba = phase3 + 1250; // 1250W je maksimalna poraba IR panelov\n    \n    if (predvidenaPoraba <= 4650) {\n        node.warn('✅ VKLOP IR: Varni pogoji');\n        return [{ payload: \"on\" }, null];\n    } else if (boilerState === 'AKTIVEN') {\n        node.warn('⚠️ IZKLOP BOJLERJA: Za omogočitev IR');\n        return [null, { \n            payload: \"off\", \n            topic: \"boiler_control\",\n            reason: \"enable_ir_heating\" \n        }];\n    }\n}\n\n// 2. Pogoji za izklop IR\nif (irJeVklopljen && (!pogojiIR || phase3 > 4650)) {\n    const razlog = !pogojiIR ? 'Neizpolnjeni pogoji' : 'Presežena moč';\n    node.warn(`⛔ IZKLOP IR: ${razlog}`);\n    return [null, { payload: \"off\", reason: razlog }];\n}\n\n// Ohranjanje trenutnega stanja\nnode.warn('🔁 Brez sprememb: ohranjanje stanja');\nreturn [null, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 220,
+        "wires": [
+            [
+                "e5664b17a32046bb"
             ],
-            []
+            [
+                "92288ecab2972196"
+            ]
+        ]
+    },
+    {
+        "id": "e5664b17a32046bb",
+        "type": "delay",
+        "z": "0e96811211eede05",
+        "name": "1 X every 5 minutes",
+        "pauseType": "rate",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "5",
+        "rateUnits": "minute",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 760,
+        "y": 200,
+        "wires": [
+            [
+                "f46649d98acfa8eb"
+            ]
+        ]
+    },
+    {
+        "id": "4d8471870caa673e",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Tm-Sp-Current consupmtion <= 1,25 kW",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "sensor.tm_sp_current_consumption",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 160,
+        "y": 340,
+        "wires": [
+            [
+                "2eca172c43e73869"
+            ]
+        ]
+    },
+    {
+        "id": "8d607ad27d7505d6",
+        "type": "server-state-changed",
+        "z": "0e96811211eede05",
+        "name": "Tm-Sp stikalo",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [
+            {
+                "property": "name",
+                "value": ""
+            },
+            {
+                "property": "icon",
+                "value": ""
+            }
+        ],
+        "entityidfilter": "switch.tm_sp",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            },
+            {
+                "property": "data",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "eventData"
+            },
+            {
+                "property": "topic",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "triggerId"
+            }
+        ],
+        "x": 250,
+        "y": 400,
+        "wires": [
+            [
+                "2eca172c43e73869"
+            ]
         ]
     },
     {
@@ -1443,7 +1771,7 @@ Sušilni stroj (Me-Ss):
 ![Sušilni stroj-Poraba](https://github.com/user-attachments/assets/cdeb01aa-58e2-4df0-8f5f-9fe5e89ee58b)
 
 ***
-
+# 📅 Popravljeno: 05.05.2025
 Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem zaradi bolj robustnega nadzora:
 ![Node red-Pralno sušilni](https://github.com/user-attachments/assets/46071b34-107c-485f-9fdd-2d5b8b6d6277)
 
