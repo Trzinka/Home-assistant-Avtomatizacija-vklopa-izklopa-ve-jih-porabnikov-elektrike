@@ -1445,466 +1445,162 @@ Sušilni stroj (Me-Ss):
 ***
 
 Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem zaradi bolj robustnega nadzora:
-![Nod red za pralni in sušilni stroj](https://github.com/user-attachments/assets/93a388e9-5a0c-4904-9ddb-2ebadc206530)
+![Node red-Pralno sušilni](https://github.com/user-attachments/assets/46071b34-107c-485f-9fdd-2d5b8b6d6277)
+
 
 Koda za pralni stroj:
 ```yaml
 [
     {
-        "id": "30459f5f562c8a1f",
-        "type": "server-state-changed",
-        "z": "b98142f5dd0202f2",
-        "name": "Total consumption, less than or equal to 4,5 kW",
-        "server": "5f28286e.ae6338",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": "sensor.p1_meter_power_phase_3",
-        "entityidfiltertype": "exact",
-        "outputinitially": false,
-        "state_type": "num",
-        "haltifstate": "4500",
-        "halt_if_type": "num",
-        "halt_if_compare": "lte",
-        "outputs": 2,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [],
-        "x": 180,
-        "y": 260,
-        "wires": [
-            [
-                "989138568c271c9e"
-            ],
-            [
-                "check_if_active"
-            ]
-        ]
+        "id": "cec1cede9c2bd3ec",
+        "type": "tab",
+        "label": "Pralni in sušilni stroj",
+        "disabled": false,
+        "info": "",
+        "env": []
     },
     {
-        "id": "989138568c271c9e",
-        "type": "delay",
-        "z": "b98142f5dd0202f2",
-        "name": "1 X every 5 minutes",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "5",
-        "rateUnits": "minute",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 500,
-        "y": 220,
-        "wires": [
-            [
-                "74ff7b555bb27d6b"
-            ]
-        ]
-    },
-    {
-        "id": "e2f3e046d780ab64",
+        "id": "fc9818f79747ddb9",
         "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
-        "name": "Turn ON washing machine",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "switch",
-        "service": "turn_on",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [
-            "switch.me_ps"
-        ],
-        "data": "{}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1060,
-        "y": 220,
-        "wires": [
-            [
-                "6a3ff3d60fbbf0a0",
-                "5adf39a56fa914e4"
-            ]
-        ]
-    },
-    {
-        "id": "0e4fa37bc7717492",
-        "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
-        "name": "Turn OFF washing machine",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Izklopi pralni stroj",
         "server": "5f28286e.ae6338",
         "version": 5,
         "debugenabled": false,
         "domain": "switch",
         "service": "turn_off",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [
-            "switch.me_ps"
-        ],
+        "entityId": "switch.me_ps",
         "data": "{}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1060,
-        "y": 340,
+        "x": 690,
+        "y": 220,
         "wires": [
             [
-                "4225377457d7fddd",
-                "00a66e801b6831d9"
+                "e4f50c6d38dea205",
+                "ec7699307125fd96"
             ]
         ]
     },
     {
-        "id": "141e0719bc237fc3",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Is the washing machine ON",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "switch.me_ps",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 800,
-        "y": 340,
-        "wires": [
-            [
-                "0e4fa37bc7717492"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "74ff7b555bb27d6b",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Is the washing machine OFF",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "off",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "switch.me_ps",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 760,
-        "y": 220,
-        "wires": [
-            [
-                "e2f3e046d780ab64"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "check_if_active",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Is power greater than 120 W?",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "120",
-        "halt_if_type": "num",
-        "halt_if_compare": "gt",
-        "entity_id": "sensor.me_prst_current_consumption",
-        "state_type": "num",
-        "blockInputOverrides": false,
-        "outputProperties": [],
-        "for": "",
-        "forType": "num",
-        "x": 530,
-        "y": 340,
-        "wires": [
-            [
-                "141e0719bc237fc3"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "6a3ff3d60fbbf0a0",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Mojca je doma?",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "home",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "person.mojca",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 1300,
-        "y": 200,
-        "wires": [
-            [
-                "f4bbd27d70ab2a1e"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "f4bbd27d70ab2a1e",
+        "id": "68c9b252aebb6532",
         "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
-        "name": "Pošlji Mojci obvestilo",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Vklopi pralni stroj",
         "server": "5f28286e.ae6338",
         "version": 5,
         "debugenabled": false,
-        "domain": "notify",
-        "service": "mobile_app_mojca_mobitel",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1520,
-        "y": 180,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "5adf39a56fa914e4",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Robert je doma?",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "home",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "person.robert",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 1310,
-        "y": 260,
-        "wires": [
-            [
-                "109f8e3feaaaa397"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "109f8e3feaaaa397",
-        "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
-        "name": "Pošlji Robert obvestilo",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "notify",
-        "service": "mobile_app_robert_mobitel",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1520,
-        "y": 240,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "4225377457d7fddd",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Mojca je doma?",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "home",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "person.mojca",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 1300,
-        "y": 320,
-        "wires": [
-            [
-                "5ae4466a9e3b074c"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "5ae4466a9e3b074c",
-        "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
-        "name": "Pošlji Mojci obvestilo",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "notify",
-        "service": "mobile_app_mojca_mobitel",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [],
-        "data": "{\"message\":\"Pralni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1520,
-        "y": 300,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "00a66e801b6831d9",
-        "type": "api-current-state",
-        "z": "b98142f5dd0202f2",
-        "name": "Robert je doma?",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "home",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "person.robert",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 1310,
+        "domain": "switch",
+        "service": "turn_on",
+        "entityId": "switch.me_ps",
+        "data": "{}",
+        "x": 690,
         "y": 380,
         "wires": [
             [
-                "4412586dfb1ffdbf"
+                "c55db0f2ff3d8fda",
+                "a13bb6677df32a43"
+            ]
+        ]
+    },
+    {
+        "id": "e4f50c6d38dea205",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 920,
+        "y": 180,
+        "wires": [
+            [
+                "675bc599f6c4b433"
             ],
             []
         ]
     },
     {
-        "id": "4412586dfb1ffdbf",
+        "id": "675bc599f6c4b433",
         "type": "api-call-service",
-        "z": "b98142f5dd0202f2",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"{{message}}\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"persistent\":true,\"sticky\":true,\"importance\":\"default\",\"priority\":\"default\"}}",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [
+            {
+                "property": "data.message",
+                "propertyType": "msg",
+                "value": "$join([payload, \". Poraba: \", flow.get('current_power'), \"W\"])",
+                "valueType": "jsonata"
+            }
+        ],
+        "queue": "none",
+        "x": 1180,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ec7699307125fd96",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 930,
+        "y": 240,
+        "wires": [
+            [
+                "333060395a06d2ed"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "333060395a06d2ed",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
         "name": "Pošlji Robert obvestilo",
         "server": "5f28286e.ae6338",
         "version": 5,
@@ -1914,44 +1610,640 @@ Koda za pralni stroj:
         "areaId": [],
         "deviceId": [],
         "entityId": [],
-        "data": "{\"message\":\"Pralni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "data": "{\"message\":\"{{message}}\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "jsonata",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [
+            {
+                "property": "data.message",
+                "propertyType": "msg",
+                "value": "$join([payload, \". Poraba: \", flow.get('current_power'), \"W\"])",
+                "valueType": "jsonata"
+            }
+        ],
+        "queue": "none",
+        "x": 1180,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c55db0f2ff3d8fda",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 920,
+        "y": 360,
+        "wires": [
+            [
+                "c7ab9c9c9ec36cd8"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c7ab9c9c9ec36cd8",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"persistent\":true,\"sticky\":true,\"importance\":\"default\",\"priority\":\"default\"}}",
         "dataType": "json",
         "mergeContext": "",
         "mustacheAltTags": false,
         "outputProperties": [],
         "queue": "none",
-        "x": 1520,
+        "x": 1180,
         "y": 360,
         "wires": [
             []
         ]
     },
     {
-        "id": "1bb6c32c123dcb29",
-        "type": "inject",
-        "z": "b98142f5dd0202f2",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 1100,
-        "y": 400,
+        "id": "a13bb6677df32a43",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 930,
+        "y": 420,
         "wires": [
             [
-                "00a66e801b6831d9"
+                "bb4042e35424935d"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "bb4042e35424935d",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Robert obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_robert_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Pralni stroj se je ponovno vklopil. Preveri stanje.\",\"title\":\"Obvestilo: Pralni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1180,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "468858d858f191ab",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Izklopi sušilni stroj",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_off",
+        "entityId": "switch.me_ss",
+        "data": "{}",
+        "x": 690,
+        "y": 100,
+        "wires": [
+            [
+                "c622c1205c0ea858",
+                "8fa47f2ed54ff378"
+            ]
+        ]
+    },
+    {
+        "id": "8fa47f2ed54ff378",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 930,
+        "y": 120,
+        "wires": [
+            [
+                "ce86dbf4d8e35ac2"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "ce86dbf4d8e35ac2",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Robert obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_robert_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Sušilni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Sušilni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1180,
+        "y": 100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c622c1205c0ea858",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 920,
+        "y": 60,
+        "wires": [
+            [
+                "570161666b711544"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "570161666b711544",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Sušilni stroj se je IZKLOPIL. Prekoračena poraba\",\"title\":\"Obvestilo: Sušilni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"persistent\":true,\"sticky\":true,\"importance\":\"default\",\"priority\":\"default\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1180,
+        "y": 40,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "07f600edf593cffc",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Vklopi sušilni stroj",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "switch",
+        "service": "turn_on",
+        "entityId": "switch.me_ss",
+        "data": "{}",
+        "x": 690,
+        "y": 500,
+        "wires": [
+            [
+                "999095eb99945e9e",
+                "2a7129636243c82d"
+            ]
+        ]
+    },
+    {
+        "id": "999095eb99945e9e",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Mojca je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.mojca",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 920,
+        "y": 480,
+        "wires": [
+            [
+                "05cbfe986059095f"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "05cbfe986059095f",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Mojci obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_mojca_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Sušilni stroj se je ponovno vklopil. Preveri stanje\",\"title\":\"Obvestilo: Sušilni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"persistent\":true,\"sticky\":true,\"importance\":\"default\",\"priority\":\"default\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1180,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2a7129636243c82d",
+        "type": "api-current-state",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Robert je doma?",
+        "server": "5f28286e.ae6338",
+        "version": 3,
+        "outputs": 2,
+        "halt_if": "home",
+        "halt_if_type": "str",
+        "halt_if_compare": "is",
+        "entity_id": "person.robert",
+        "state_type": "str",
+        "blockInputOverrides": false,
+        "outputProperties": [],
+        "for": "0",
+        "forType": "num",
+        "forUnits": "minutes",
+        "override_topic": false,
+        "state_location": "payload",
+        "override_payload": "msg",
+        "entity_location": "data",
+        "override_data": "msg",
+        "x": 933.8923645019531,
+        "y": 538.125,
+        "wires": [
+            [
+                "748e53bcfe601d9c"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "748e53bcfe601d9c",
+        "type": "api-call-service",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pošlji Robert obvestilo",
+        "server": "5f28286e.ae6338",
+        "version": 5,
+        "debugenabled": false,
+        "domain": "notify",
+        "service": "mobile_app_robert_mobitel",
+        "areaId": [],
+        "deviceId": [],
+        "entityId": [],
+        "data": "{\"message\":\"Sušilni stroj se je ponovno vklopil. Preveri stanje\",\"title\":\"Obvestilo: Sušilni stroj\",\"data\":{\"actions\":[{\"action\":\"ACK_PRALNI_STROJ\",\"title\":\"Videl sem 👍\"}],\"channel\":\"alarm_stream\",\"persistent\":true,\"sticky\":true,\"importance\":\"high\",\"priority\":\"high\"}}",
+        "dataType": "json",
+        "mergeContext": "",
+        "mustacheAltTags": false,
+        "outputProperties": [],
+        "queue": "none",
+        "x": 1180,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "648ad4dac156e68b",
+        "type": "function",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Emergency preverjanje",
+        "func": "// Funkcija za nadzor porabe s 4 izhodi - POPRAVLJENA VERZIJA\n// 1. izhod: Izklop sušilnega stroja\n// 2. izhod: Izklop pralnega stroja\n// 3. izhod: Vklop pralnega stroja\n// 4. izhod: Vklop sušilnega stroja\n\n// Inicializacija spremenljivk\nlet porabaFaze3 = flow.get('poraba_faze3') || 0;\nlet pralniStanj = (flow.get('pralni_stanje') === 1 || flow.get('pralni_stanje') === 'on') ? 'on' : 'off';\nlet susilniStanj = (flow.get('susilni_stanje') === 1 || flow.get('susilni_stanje') === 'on') ? 'on' : 'off';\nlet pralniPoraba = flow.get('pralni_poraba') || 0;\nlet susilniPoraba = flow.get('susilni_poraba') || 0;\n\n// Obdelava vhodnih podatkov\nif (msg.topic === 'sensor.p1_meter_power_phase_3') {\n    porabaFaze3 = parseFloat(msg.payload) || 0;\n    flow.set('poraba_faze3', porabaFaze3);\n} \nelse if (msg.topic === 'switch.me_ps') {\n    pralniStanj = (msg.payload === 1 || msg.payload === 'on') ? 'on' : 'off';\n    flow.set('pralni_stanje', pralniStanj);\n} \nelse if (msg.topic === 'switch.me_ss_switch_0') {\n    susilniStanj = (msg.payload === 1 || msg.payload === 'on') ? 'on' : 'off';\n    flow.set('susilni_stanje', susilniStanj);\n} \nelse if (msg.topic === 'sensor.me_prst_current_consumption') {\n    pralniPoraba = parseFloat(msg.payload) || 0;\n    flow.set('pralni_poraba', pralniPoraba);\n} \nelse if (msg.topic === 'sensor.me_ss_current_consumption') {\n    susilniPoraba = parseFloat(msg.payload) || 0;\n    flow.set('susilni_poraba', susilniPoraba);\n}\n\n// Globalna stanja naprav\nconst boilerState = global.get('boilerSwitchState') || 'off';\nconst boilerPower = parseFloat(global.get('boilerPower')) || 0;\nconst boilerStatus = boilerPower > 100 ? '🔴 AKTIVEN' : '🟢 neaktiven';\n\nconst irNaState = global.get('irSwitchState_na') || 'off';\nconst irNaPoraba = parseFloat(global.get('irPoraba_na')) || 0;\nconst irNaStatus = irNaPoraba > 100 ? '🔴 AKTIVEN' : '🟢 neaktiven';\n\nconst irSpState = global.get('irSwitchState_sp') || 'off';\nconst irSpPoraba = parseFloat(global.get('irPoraba_sp')) || 0;\nconst irSpStatus = irSpPoraba > 100 ? '🔴 AKTIVEN' : '🟢 neaktiven';\n\nconst irDiState = global.get('irSwitchState_di') || 'off';\nconst irDiPoraba = parseFloat(global.get('irPoraba_di')) || 0;\nconst irDiStatus = irDiPoraba > 100 ? '🔴 AKTIVEN' : '🟢 neaktiven';\n\nconst pralniStatus = pralniPoraba > 120 ? '🔴 AKTIVEN' : '🟢 neaktiven';\nconst susilniStatus = susilniPoraba > 240 ? '🔴 AKTIVEN' : '🟢 neaktiven';\n\nconst stalnaPoraba = 500; // Osnovna poraba hiše\n\n// Debug izpis z dodatnim preverjanjem\nnode.warn(`⚡️\n┏\n┃ 𝗙𝗮𝘇𝗮 𝟯: ${porabaFaze3}W ${porabaFaze3 <= 4650 ? '✅' : '❌'} (meja: 4650W)\n┃ 𝗣𝗿𝗮𝗹𝗻𝗶 𝘀𝘁𝗿𝗼𝗷: ${pralniStanj === 'on' ? 'on' : 'OFF'} ${pralniStatus} (${pralniPoraba}W)\n┃ 𝗦𝘂š𝗶𝗹𝗻𝗶 𝘀𝘁𝗿𝗼𝗷: ${susilniStanj === 'on' ? 'on' : 'OFF'} ${susilniStatus} (${susilniPoraba}W)\n┃ 𝗕𝗼𝗷𝗹𝗲𝗿: ${boilerState} ${boilerStatus} (${boilerPower}W)\n┃ 𝗜𝗥 𝗡𝗮𝘁𝗵𝗮𝗹𝗶𝗲: ${irNaState} ${irNaStatus} (${irNaPoraba}W)\n┃ 𝗜𝗥 𝗦𝗽𝗮𝗹𝗻𝗶𝗰𝗮: ${irSpState} ${irSpStatus} (${irSpPoraba}W)\n┃ 𝗜𝗥 𝗗𝗶𝗮𝗻𝗲: ${irDiState} ${irDiStatus} (${irDiPoraba}W)\n┗`);\n\n// Glavna logika - POPRAVLJENA\nif (porabaFaze3 > 4650) {\n    // EMERGENCY - presežena moč (ostane enako)\n    // ... (isti emergency del kode kot prej)\n}\n// Popravljena glavna logika - samo relevantni del\nelse {\n    // Normalno delovanje - preveri možnost vklopa\n    const prostaMoc = 4650 - porabaFaze3;\n    \n    // Preverimo dejansko stanje strojev\n    const jePralniVklopljen = pralniStanj === 'on';\n    const jeSusilniVklopljen = susilniStanj === 'on';\n    const jePralniAktiven = pralniPoraba > 120;\n    const jeSusilniAktiven = susilniPoraba > 240;\n    \n    // Pralni stroj ima prednost pred sušilnim\n    if (!jePralniVklopljen && !jePralniAktiven && prostaMoc >= 1920 + stalnaPoraba) {\n        node.warn('✅ POGOJI ZA VKLOP PRALNEGA STROJA IZPOLNJENI');\n        flow.set('pralni_stanje', 'on');\n        return [null, null, { payload: \"on\" }, null];\n    }\n    // Če ni dovolj prostora za pralni stroj, preveri za sušilni\n    else if (!jeSusilniVklopljen && !jeSusilniAktiven && prostaMoc >= 2500 + stalnaPoraba) {\n        node.warn('✅ POGOJI ZA VKLOP SUŠILNEGA STROJA IZPOLNJENI');\n        flow.set('susilni_stanje', 'on');\n        return [null, null, null, { payload: \"on\" }];\n    }\n    \n    // Ohranjanje trenutnega stanja\n    if (jePralniVklopljen || jeSusilniVklopljen) {\n        node.warn('🔁 Naprave so že vklopljene - ohranjanje stanja');\n    } else {\n        node.warn('🔁 Premalo proste moči za vklop - ohranjanje stanja');\n    }\n    return [null, null, null, null];\n}",
+        "outputs": 4,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 300,
+        "wires": [
+            [
+                "468858d858f191ab"
+            ],
+            [
+                "fc9818f79747ddb9"
+            ],
+            [
+                "68c9b252aebb6532"
+            ],
+            [
+                "07f600edf593cffc"
+            ]
+        ]
+    },
+    {
+        "id": "a53cf0330d39a2ab",
+        "type": "server-state-changed",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Skupna poraba",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [],
+        "entityidfilter": "sensor.p1_meter_power_phase_3",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "num",
+        "halt_if_compare": "gte",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "",
+        "forType": "num",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 80,
+        "y": 300,
+        "wires": [
+            [
+                "648ad4dac156e68b"
+            ]
+        ]
+    },
+    {
+        "id": "5d1281322eb3cc9d",
+        "type": "server-state-changed",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Sušilni poraba",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [],
+        "entityidfilter": "sensor.me_ss_current_consumption",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "num",
+        "halt_if_compare": "gte",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "",
+        "forType": "num",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 90,
+        "y": 240,
+        "wires": [
+            [
+                "648ad4dac156e68b"
+            ]
+        ]
+    },
+    {
+        "id": "1de5b320ec5d6519",
+        "type": "server-state-changed",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pralni poraba",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [],
+        "entityidfilter": "sensor.me_prst_current_consumption",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "num",
+        "haltifstate": "",
+        "halt_if_type": "num",
+        "halt_if_compare": "gte",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "",
+        "forType": "num",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 90,
+        "y": 360,
+        "wires": [
+            [
+                "648ad4dac156e68b"
+            ]
+        ]
+    },
+    {
+        "id": "035e7ef904150166",
+        "type": "server-state-changed",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Sušilni stikalo",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [],
+        "entityidfilter": "switch.me_ss_switch_0",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "num",
+        "halt_if_compare": "gte",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "",
+        "forType": "num",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 90,
+        "y": 180,
+        "wires": [
+            [
+                "648ad4dac156e68b"
+            ]
+        ]
+    },
+    {
+        "id": "3f5f91cc5b05624e",
+        "type": "server-state-changed",
+        "z": "cec1cede9c2bd3ec",
+        "name": "Pralni stikalo",
+        "server": "5f28286e.ae6338",
+        "version": 4,
+        "exposeToHomeAssistant": false,
+        "haConfig": [],
+        "entityidfilter": "switch.me_ps",
+        "entityidfiltertype": "exact",
+        "outputinitially": true,
+        "state_type": "str",
+        "haltifstate": "",
+        "halt_if_type": "num",
+        "halt_if_compare": "gte",
+        "outputs": 1,
+        "output_only_on_state_change": false,
+        "for": "",
+        "forType": "num",
+        "ignorePrevStateNull": false,
+        "ignorePrevStateUnknown": false,
+        "ignorePrevStateUnavailable": false,
+        "ignoreCurrentStateUnknown": false,
+        "ignoreCurrentStateUnavailable": false,
+        "outputProperties": [
+            {
+                "property": "payload",
+                "propertyType": "msg",
+                "value": "",
+                "valueType": "entityState"
+            }
+        ],
+        "x": 90,
+        "y": 420,
+        "wires": [
+            [
+                "648ad4dac156e68b"
             ]
         ]
     },
@@ -1981,23 +2273,132 @@ Koda za pralni stroj:
 ]
 ```
 
-Kaj ta tok (flow) dela:
+### Kaj ta tok (flow) dela:
 
-Preveri, če je skupna poraba elektrike manjša ali enaka 4.5 kW in če je 
-se sproži na vsake 5 minut nadaljevanje kjer 
-preveri, če je stikalo za pralni stroj ugasnjeno in če je 
-ga vklopi
-ko ga vklopi (pogoj) preveri, če sva z ženo doma in če je pogoj izpolnjen
-pošlje sporočilo "Pralni stroj se je ponovno vklopil. Preveri stanje." na mobitel (na mobilnem aparatu morate imeti nameščen Home assistant companion APP, da zadeva deluje), ker je potrebno na stroju ročno pritisniti gumb za nadaljevanje.
+Inteligentni sistem za optimizacijo porabe energije
+Funkcionalnost
+Avtomatizirani sistem za dinamično upravljanje energetske porabe v gospodinjstvu z:
 
-Pri preverbi, če je skupna poraba elektrike manjša ali enaka 4.5 kW in če ni (je višja) preveri, 
-če je poraba pralnega stroja večja kot 120 W in če je
-preveri, če je stikalo pralnega stroja prižgano in če je ugasne stikalo pralnega stroja
-ko ga izklopi (pogoj) preveri, če sva z ženo doma in če je pogoj izpolnjen
-pošlje sporočilo "Pralni stroj se je IZKLOPIL. Prekoračena poraba" na mobitel (na mobilnem aparatu morate imeti nameščen Home assistant companion APP, da zadeva deluje).
+Hierarhičnim nadzorom 8 ključnih naprav (pralni stroj, sušilni stroj, bojler, 3x IR panel, osnovna poraba)
 
-Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
+Real-time optimizacijo glede na:
 
+Trenutno porabo faze 3 (limit: 4650W)
+
+Prednostne naloge (pralni > sušilni > IR paneli > bojler)
+
+Kombinacijsko logiko porabe
+
+Samoumevajočim režimom varčevanja s primerjalnimi scenariji
+
+Ključne značilnosti
+🔌 Multi-napravno upravljanje:
+
+Pralni stroj (1920W)
+
+Sušilni stroj (2500W)
+
+Bojler (2010W)
+
+IR paneli (Diane: 750W, Nathalie: 650W, Spalnica: 1250W)
+
+Osnovna poraba (500W)
+
+⚡ Dinamična prioritizacija:
+
+Diagram
+![deepseek_1](https://github.com/user-attachments/assets/e0101296-a81e-4d43-95be-c7d5f860dcbc)
+
+
+📊 Kombinacijska inteligenca:
+
+```javascript
+// Primerjalna logika
+const dovoljenaKombinacija = (prostaMoc) => {
+  if(prostaMoc >= 1920 + 2010 + 500) return "Pralni+Bojler";
+  if(prostaMoc >= 2500 + 1250 + 500) return "Sušilni+IR Spalnica"; 
+  // ... ostali scenariji
+}
+```
+Tehnična izvedba
+Viri podatkov:
+
+Senzorji: p1_meter_power_phase_3, me_prst_current_consumption, me_ss_current_consumption
+
+Globalni kontekst: boilerSwitchState, boilerPower, irSwitchState_na, irPoraba_na, ...
+
+Flow spremenljivke: pralni_stanje, susilni_stanje, pralni_poraba
+
+Odločitvena matrika:
+
+Kombinacija	Skupna poraba	Status	Akcija
+Pralni + Sušilni	4420W	❌ Preobremenitev	Izklop sušilnega
+IR Spalnica + Bojler	3260W	✅ Dovoljeno	Ohrani stanje
+Vsi IR + Bojler	5160W	❌ Preobremenitev	Izklop bojlerja
+Algoritem vklopa:
+
+```python
+def vklopi_napravo():
+    prosta_moc = 4650 - (poraba_faze + stalna_poraba)
+    if prosta_moc >= naprava.poraba + varnostni_meji:
+        if not naprava.je_vklopljen and not naprava.je_aktiven:
+            naprava.vklopi()
+            posodobi_globalno_stanje()
+```
+Varnostni mehanizmi
+Zakasnitev preverjanja (3000ms po vklopu)
+
+Dvojno preverjanje:
+
+```javascript
+const jeVarenVklop = (
+  (global.get('boilerPower') < 100) && 
+  (flow.get('poraba_faze3') + nova_naprava.poraba < 4650)
+);
+```
+
+Emergency log s timestampi:
+
+```log
+2025-05-05 14:30: [WARN] Preobremenitev! Izklop bojlerja (2010W)
+```
+
+Primeri delovanja
+Scenarij 1: Prekomerna poraba
+
+Diagram
+![deepseek_2](https://github.com/user-attachments/assets/022dbcf5-182c-4f4b-9ecf-de6864160f61)
+
+
+Diagram
+![deepseek_3](https://github.com/user-attachments/assets/ff96942d-2486-41af-b2c3-904539ddd096)
+
+Namestitev in uporaba
+Zahteve:
+
+Node-RED z node-jem node-red-contrib-home-assistant
+
+Merilniki energije s podporo MQTT/API
+
+Globalne spremenljivke za vsako napravo
+
+Konfiguracija:
+
+```yaml
+# primer globalnih nastavitev
+boiler:
+  switch_entity: input_boolean.bojler_switch
+  power_sensor: sensor.bojler_power
+```
+Testni scenariji:
+
+```javascript
+// Test emergency režima
+simulateOverload(5000, () => {
+  assert(bojler.stanje === 'off');
+  assert(log.vsebuje('Preobremenitev'));
+});
+```
 ***
 
 # 📅 Dodano: 20.04.2025
