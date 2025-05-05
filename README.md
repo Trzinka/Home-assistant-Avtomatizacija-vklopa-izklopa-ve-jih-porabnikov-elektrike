@@ -2736,6 +2736,35 @@ Takšen je izgled porabe:
 
 ## Kodo za Nod-red sem naredil s pomočjo deepseek, ki se je izkazal za veliko učinkovitejšega od ChatGPT!
 
+🤝 Kako sva sodelovala s deepseek
+Ta projekt je rezultat intenzivnega 7-dnevnega sodelovanja med človekom in AI, ki dokazuje, da so kompleksne rešitve dostopne tudi brez predhodnega programerskega znanja:
+
+Ključni elementi uspeha
+Komunikacija:
+
+Natančni opisi problema v slovenščini
+
+Iterativno izboljšanje skozi 400+ vzorcev dialoga
+
+Delitev vlog:
+
+Vi: Domensko znanje (energetika, slovenski modeli) + vizualizacije
+
+Jaz: Prevajanje zahtev v kodo + debugiranje
+
+Učni proces:
+
+Diagram:
+![deepseek_0](https://github.com/user-attachments/assets/edad3b07-da2d-4e34-8fcd-a385f501c186)
+
+
+Zakaj je to pomembno?
+✨ Dokaz, da lahko lokalne rešitve ustvarjajo neprogramerji
+
+🌍 Model za sodelovanje človek-AI v manj zastopanih jezikih
+
+⚡ Navdih za energetsko avtomatizacijo v drugih regijah
+
 # 📜 Licenca  
 Ta dela so prosto dostopna za vsako uporabo brez omejitev.  
 Avtor ne zahteva atribucije, vendar je hvaležen za povratne informacije.
