@@ -82,441 +82,61 @@ ___
 ___
 ### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
 
-# 📅 Popravljeno: 05.05.2025
-💡 Primer za bojler.
-![Node red-Bojler](https://github.com/user-attachments/assets/1c393111-44a1-4e29-852a-b0719d9cf955)
+# 📅 Popravljeno: 08.05.2025
+💡 Primer za bojler ki ima najnižjo prioriteto delovanja (se prvi izklaplja).
+![Bojler](https://github.com/user-attachments/assets/c5e84dd2-7bfe-4405-970b-0ad3444eb953)
 
 
-✍️ Koda za nod: 
-```yaml
-[
-    {
-        "id": "88ea0246d87f31ef",
-        "type": "tab",
-        "label": "Bojler",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "e18afdd2b2a80835",
-        "type": "server-state-changed",
-        "z": "88ea0246d87f31ef",
-        "name": "Me-Bo-Current consumption <= 2,01 kW",
-        "server": "5f28286e.ae6338",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": "sensor.me_bo_current_consumption",
-        "entityidfiltertype": "exact",
-        "outputinitially": true,
-        "state_type": "str",
-        "haltifstate": "",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 1,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            },
-            {
-                "property": "topic",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "triggerId"
-            }
-        ],
-        "x": 160,
-        "y": 40,
-        "wires": [
-            [
-                "24f47e3291fa445d"
-            ]
-        ]
-    },
-    {
-        "id": "cfe5da23c6543707",
-        "type": "server-state-changed",
-        "z": "88ea0246d87f31ef",
-        "name": "Phase 3-Current consumption <= 2,64 kW",
-        "server": "5f28286e.ae6338",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": "sensor.p1_meter_power_phase_3",
-        "entityidfiltertype": "exact",
-        "outputinitially": true,
-        "state_type": "str",
-        "haltifstate": "",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 1,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            },
-            {
-                "property": "topic",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "triggerId"
-            }
-        ],
-        "x": 160,
-        "y": 100,
-        "wires": [
-            [
-                "24f47e3291fa445d"
-            ]
-        ]
-    },
-    {
-        "id": "24f47e3291fa445d",
-        "type": "function",
-        "z": "88ea0246d87f31ef",
-        "name": "function",
-        "func": "// === VHODNI PODATKI ===\nconst currentValue = parseFloat(msg.payload);\nconst topic = msg.topic;\n\n// Shranjevanje vrednosti\nif (topic === 'sensor.me_bo_current_consumption') {\n    global.set('mebo', currentValue);\n    global.set('boilerPower', currentValue);\n} else if (topic === 'sensor.p1_meter_power_phase_3') {\n    global.set('phase3', currentValue);\n} else if (topic === 'switch.me_bo') {\n    global.set('boilerSwitchState', msg.payload);\n}\n\n// === INTERNI PARAMETRI ===\nconst mebo = parseFloat(global.get('mebo') || 0);\nconst phase3 = parseFloat(global.get('phase3') || 0);\nconst boilerSwitchState = global.get('boilerSwitchState') || 'off';\n\n// Določanje statusa\nlet boilerStatus;\nif (boilerSwitchState === 'off') {\n    boilerStatus = 'off';\n} else {\n    boilerStatus = mebo > 100 ? 'AKTIVEN' : 'neaktiven';\n}\nglobal.set('boilerState', boilerStatus);\n\n// === DEBUG ===\nnode.warn(`♨️ \nStikalo: ${boilerSwitchState}  \nPoraba: ${mebo}W  \nStatus: ${boilerStatus}  \nPhase3: ${phase3}W`);\n\n// === LOGIKA ===\nif (phase3 <= 2100 && boilerSwitchState === 'off') {\n    node.warn('✅ VKLOP BOJLERJA (pogoji izpolnjeni)');\n    return [{ payload: \"on\" }, null];\n} else if (phase3 > 4650 && boilerSwitchState === 'on') {\n    node.warn('⛔ IZKLOP BOJLERJA (presežena moč)');\n    return [null, { payload: \"off\" }];\n}\n\nreturn [null, null];",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 440,
-        "y": 100,
-        "wires": [
-            [
-                "4e2336384af3ac68"
-            ],
-            [
-                "f0f3ddd2d18f08fc"
-            ]
-        ]
-    },
-    {
-        "id": "4e2336384af3ac68",
-        "type": "delay",
-        "z": "88ea0246d87f31ef",
-        "name": "1 X every 5 minutes",
-        "pauseType": "rate",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "5",
-        "rateUnits": "minute",
-        "randomFirst": "1",
-        "randomLast": "5",
-        "randomUnits": "seconds",
-        "drop": true,
-        "allowrate": false,
-        "outputs": 1,
-        "x": 628.8923606872559,
-        "y": 62.90277099609375,
-        "wires": [
-            [
-                "84c8c6492cb278ec"
-            ]
-        ]
-    },
-    {
-        "id": "c9c9a142c074d938",
-        "type": "api-call-service",
-        "z": "88ea0246d87f31ef",
-        "name": "Turn ON Boiler",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "switch",
-        "service": "turn_on",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [
-            "switch.me_bo"
-        ],
-        "data": "{}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1028.8923606872559,
-        "y": 42.90277099609375,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "ef8254e039891324",
-        "type": "api-call-service",
-        "z": "88ea0246d87f31ef",
-        "name": "Turn OFF Boiler",
-        "server": "5f28286e.ae6338",
-        "version": 5,
-        "debugenabled": false,
-        "domain": "switch",
-        "service": "turn_off",
-        "areaId": [],
-        "deviceId": [],
-        "entityId": [
-            "switch.me_bo"
-        ],
-        "data": "{}",
-        "dataType": "json",
-        "mergeContext": "",
-        "mustacheAltTags": false,
-        "outputProperties": [],
-        "queue": "none",
-        "x": 1028.8923606872559,
-        "y": 122.90277099609375,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "f0f3ddd2d18f08fc",
-        "type": "api-current-state",
-        "z": "88ea0246d87f31ef",
-        "name": "Is the boiler ON",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "on",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "switch.me_bo",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 728.8923606872559,
-        "y": 122.90277099609375,
-        "wires": [
-            [
-                "ef8254e039891324"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "84c8c6492cb278ec",
-        "type": "api-current-state",
-        "z": "88ea0246d87f31ef",
-        "name": "Is the boiler OFF",
-        "server": "5f28286e.ae6338",
-        "version": 3,
-        "outputs": 2,
-        "halt_if": "off",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "entity_id": "switch.me_bo",
-        "state_type": "str",
-        "blockInputOverrides": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entity"
-            }
-        ],
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "override_topic": false,
-        "state_location": "payload",
-        "override_payload": "msg",
-        "entity_location": "data",
-        "override_data": "msg",
-        "x": 838.8923606872559,
-        "y": 62.90277099609375,
-        "wires": [
-            [
-                "c9c9a142c074d938"
-            ],
-            []
-        ]
-    },
-    {
-        "id": "dodaten_node_id",
-        "type": "server-state-changed",
-        "z": "88ea0246d87f31ef",
-        "name": "Sprememba stanja stikala bojlerja",
-        "server": "5f28286e.ae6338",
-        "version": 4,
-        "exposeToHomeAssistant": false,
-        "haConfig": [
-            {
-                "property": "name",
-                "value": ""
-            },
-            {
-                "property": "icon",
-                "value": ""
-            }
-        ],
-        "entityidfilter": "switch.me_bo",
-        "entityidfiltertype": "exact",
-        "outputinitially": true,
-        "state_type": "str",
-        "haltifstate": "",
-        "halt_if_type": "str",
-        "halt_if_compare": "is",
-        "outputs": 1,
-        "output_only_on_state_change": true,
-        "for": "0",
-        "forType": "num",
-        "forUnits": "minutes",
-        "ignorePrevStateNull": false,
-        "ignorePrevStateUnknown": false,
-        "ignorePrevStateUnavailable": false,
-        "ignoreCurrentStateUnknown": false,
-        "ignoreCurrentStateUnavailable": false,
-        "outputProperties": [
-            {
-                "property": "payload",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "entityState"
-            },
-            {
-                "property": "data",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "eventData"
-            },
-            {
-                "property": "topic",
-                "propertyType": "msg",
-                "value": "",
-                "valueType": "triggerId"
-            }
-        ],
-        "x": 130,
-        "y": 160,
-        "wires": [
-            [
-                "24f47e3291fa445d"
-            ]
-        ]
-    },
-    {
-        "id": "5f28286e.ae6338",
-        "type": "server",
-        "name": "Home Assistant",
-        "version": 5,
-        "addon": true,
-        "rejectUnauthorizedCerts": true,
-        "ha_boolean": "y|yes|true|on|home|open",
-        "connectionDelay": true,
-        "cacheJson": true,
-        "heartbeat": false,
-        "heartbeatInterval": 30,
-        "areaSelector": "friendlyName",
-        "deviceSelector": "friendlyName",
-        "entitySelector": "friendlyName",
-        "statusSeparator": "at: ",
-        "statusYear": "hidden",
-        "statusMonth": "short",
-        "statusDay": "numeric",
-        "statusHourCycle": "h23",
-        "statusTimeFormat": "h:m",
-        "enableGlobalContextStore": true
-    }
-]
-```
 
-Kaj ta tok (flow) dela:
+✍️ Koda v nod-red za prenos: 
+[20250508-Bojler flows.zip](https://github.com/user-attachments/files/20099574/20250508-Bojler.flows.zip)
 
-Preveri, če je skupna poraba elektrike manjša ali enaka 4 kW in če je
-se sproži na vsake 5 minut nadaljevanje kjer  
-preveri, če je stikalo za bojler ugasnjeno in če je
-ga vklopi.
 
-Pri preverbi, če je skupna poraba elektrike manjša ali enaka 4 kW in če ni (je višja)
-preveri, če je stikalo bojlerja prižgano in če je
-ugasne stikalo bojlerja.
+// Funkcijska koda za upravljanje bojlerja v Node-RED okolju
 
-Preverbe stanj delam zaradi zapisovanja stanja naprav v podatkovno bazo!
+## Namen
+Koda upravlja stanje električnega bojlerja na podlagi trenutne porabe energije in stanja faze 3. Glavni cilj je optimizirana poraba energije in preprečevanje preobremenitve.
+
+## Vhodni podatki
+- `msg.payload`: Vrednost porabe energije (v W) ali stanje stikala
+- `msg.topic`: Identifikator vira podatkov:
+  - 'sensor.me_bo_current_consumption' - poraba bojlerja
+  - 'sensor.p1_meter_power_phase_3' - poraba faze 3
+  - 'switch.me_bo' - stanje stikala bojlerja
+
+## Delovanje
+
+### 1. Shranjevanje vrednosti
+- Vrednosti se shranjujejo v globalne spremenljivke glede na topic:
+  - 'mebo' in 'boilerPower' - trenutna poraba bojlerja
+  - 'phase3' - poraba faze 3
+  - 'boilerSwitchState' - stanje stikala ('on'/'off')
+
+### 2. Določanje statusa bojlerja
+- Če je stikalo izklopljeno ('off'), je status 'off'
+- Če je stikalo vklopljeno, je status:
+  - 'AKTIVEN' če poraba presega 100W
+  - 'neaktiven' če poraba je ≤ 100W
+
+### 3. Debug izpis
+- Izpisuje podrobno stanje sistema v konzolo z vizualnimi indikatorji:
+  - Stanje stikala
+  - Porabo bojlerja
+  - Status bojlerja
+  - Skupno porabo faze 3
+
+### 4. Logika upravljanja
+- **Vklop bojlerja**: Če je poraba faze 3 ≤ 2100W in je stikalo izklopljeno
+- **Izklop bojlerja**: Če je poraba faze 3 > 4650W in je stikalo vklopljeno
+
+## Izhodi
+- Prvi izhod: Pošlje ukaz 'on' za vklop bojlerja
+- Drugi izhod: Pošlje ukaz 'off' za izklop bojlerja
+- Če pogoji niso izpolnjeni, vrne [null, null]
+
+## Varnostne meje
+- Varna poraba faze 3: ≤ 4650W (izklop ob presežku)
+- Optimalni pogoji za vklop: ≤ 2100W
 
 ___
 
