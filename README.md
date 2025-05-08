@@ -91,6 +91,7 @@ ___
 ✍️ Koda v nod-red za prenos: 
 [20250508-Bojler flows.zip](https://github.com/user-attachments/files/20099574/20250508-Bojler.flows.zip)
 
+// Funkcijska koda za upravljanje bojlerja v Node-RED okolju
 
 ## Namen
 Koda upravlja stanje električnega bojlerja na podlagi trenutne porabe energije in stanja faze 3. Glavni cilj je optimizirana poraba energije in preprečevanje preobremenitve.
