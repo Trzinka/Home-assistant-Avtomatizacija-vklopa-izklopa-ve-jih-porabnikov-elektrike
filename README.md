@@ -87,12 +87,119 @@ Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem
 ___
 Ta zavihek vsebuje dva toka (flow-a). Čisto zgoraj je tok, ki skrbi za nadzor delovanja nad vsemi napravami gled na njihovo porabo in skupno porabo (opisano kasnjeje podrobneje), spodnji tok pa skrbi za delovanje pralnega in sušilnega stroja s pomočjo zgornjega toka, ki skrbi za delovanje tudi drugih naprav, ki jih bom opisal kasneje
 ___
+## 1.) tok (flow)
+# 🔌 Emergency Power Management Flow - Popoln opis
 
+## 🌟 Opis flow-a
+
+Ta flow v Node-RED nenehno spremlja porabo električne energije na **fazi 3** preko senzorja `p1_meter_power_phase_3` in aktivira emergency protokol, ko poraba preseže nastavljeno mejo.
+
+---
+
+## 📊 Komponente flow-a
+
+### 1. `server-state-changed` node
+- 👁️ Sledi spremembam vrednosti senzorja `p1_meter_power_phase_3`
+- 🔄 Pošilja podatke samo ob spremembi vrednosti
+- 📦 Nastavi:
+  - `msg.payload` = trenutna poraba (W)
+  - `msg.topic` = `"sensor.p1_meter_power_phase_3"`
+
+### 2. `function` node: *Upravljanje napajanja v sili*
+- 🧠 Glavna logična enota za emergency upravljanje
+- ⚠️ Implementira:
+  - Sledenje porabi v realnem času
+  - Prioritiziran sistem izklopov
+  - Zaščitne mehanizme
+
+### 3. `server` node
+- 🏠 Povezava s Home Assistant sistemom
+- 🔗 Omogoča integracijo z ostalimi pametnimi napravami
+
+---
+
+## ⚙️ Podrobnosti delovanja
+
+### 🔄 Prioritetno zaporedje izklopov
+
+```javascript
+const emergencySequence = [
+    'bojler',     // ♨️ Najmanj kritična naprava
+    'irNa',       // 🌞 IR panel Nathalie
+    'irSp',       // 🛏️ IR panel spalnica
+    'irDi',       // 👧 IR panel Diane
+    'susilni',    // 🔥 Sušilni stroj
+    'pralni'      // 🧺 Pralni stroj (najbolj kritičen)
+];
+
+---
+
+## 🛡️ Varnostni mehanizmi
+
+- ⏱️ **5-sekundni zaščitni zamik** med zaporednimi izklopi  
+- 🧪 **Preverjanje svežosti podatkov (timeout 10s):**
+
+```javascript
+if (currentTime - global.get('last_phase3_update') > 10000) {
+    node.warn("⚠️ OPOZORILO: Zastareli podatki!");
+}
+
+---
+
+## 📑 Obsežno logiranje vseh dogodkov
+
+Sistem zapisuje vsak dogodek, ki vključuje:
+- sprožitev ali ponastavitev emergency režima
+- izklop posamezne naprave
+- opozorila o zastarelih podatkih
+
+---
+
+## 📤 Primeri izhodnih sporočil
+
+### 🚨 Emergency režim
+
+```json
+{
+  "event": "EMERGENCY_TRIGGERED",
+  "device": "bojler",
+  "power": 4820,
+  "timestamp": "2023-11-15T14:23:45Z"
+}
+
+### ✅ Normalno stanje
+
+```json
+{
+  "event": "POWER_NORMALIZED",
+  "power": 4200,
+  "timestamp": "2023-11-15T14:25:30Z"
+}
+
+## 🛠️ Konfiguracija
+
+| Parameter              | Vrednost | Opis                           |
+|------------------------|----------|--------------------------------|
+| `max_dovoljena_poraba` | 4650 W   | Nastavljiva meja               |
+| `zaščitni_zamik`       | 5 s      | Časovni zamik med izklopi      |
+| `timeout_podatkov`     | 10 s     | Preverjanje svežosti podatkov  |
+
+---
+
+## 🌈 Delovni primer
+
+1. Sistem zazna porabo **4800W** (> 4650W)
+2. Izklopi ♨️ **bojler** (prvi v zaporedju)
+3. Če po **5 sekundah** poraba še vedno presežena:
+   - Izklopi 🌞 **IR panel Nathalie**
+4. Ko poraba pade pod mejo:
+   - ✅ Ponastavi vse *emergency flag-e*
+   - 📝 Zabeleži dogodek v dnevnik
 ___
 
 ___
+## 2.) tok (flow)
 
-___
 
 ***
 
