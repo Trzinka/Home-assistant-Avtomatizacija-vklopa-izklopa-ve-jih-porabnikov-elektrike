@@ -1017,23 +1017,6 @@ const debugIzpis = `
 ┗`;
 ```
 
-## 🌈 Delovni primeri
-
-### 1. Normalno delovanje
-```mermaid
-graph TD
-    A[Temperatura ≤20.5°C] --> B[Vklop IR]
-    B --> C[Temperatura ≥21.5°C]
-    C --> D[Izklop IR]
-```
-
-### 2. Emergency scenarij
-```mermaid
-graph TD
-    A[Prekoračitev moči] --> B[Emergency izklop]
-    B --> C[Ohlajanje]
-```
-
 💡 **Opomba**: Sistem vsakih 5 sekund samodejno osveži vse parametre.
 ___
 
