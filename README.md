@@ -1017,7 +1017,7 @@ const debugIzpis = `
 ┗`;
 ```
 
-💡 **Opomba**: Sistem vsakih 5 sekund samodejno osveži vse parametre.
+💡 **Opomba**: Sistem vsakih 5 minut samodejno osveži vse parametre.
 ___
 
 Koda funkcije:
