@@ -87,8 +87,7 @@ Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem
 ___
 Ta zavihek vsebuje dva toka (flow-a). Čisto zgoraj je tok, ki skrbi za nadzor delovanja nad vsemi napravami gled na njihovo porabo in skupno porabo (opisano kasnjeje podrobneje), spodnji tok pa skrbi za delovanje pralnega in sušilnega stroja s pomočjo zgornjega toka, ki skrbi za delovanje tudi drugih naprav, ki jih bom opisal kasneje
 ___
-## 1.) tok (flow)
-# 🔌 Emergency Power Management Flow - Popoln opis
+# 🔌 1.) Emergency Power Management Flow - Popoln opis
 
 ## 🌟 Opis flow-a
 
@@ -131,7 +130,7 @@ const emergencySequence = [
     'susilni',    // 🔥 Sušilni stroj
     'pralni'      // 🧺 Pralni stroj (najbolj kritičen)
 ];
-
+```
 ---
 
 ## 🛡️ Varnostni mehanizmi
@@ -143,7 +142,7 @@ const emergencySequence = [
 if (currentTime - global.get('last_phase3_update') > 10000) {
     node.warn("⚠️ OPOZORILO: Zastareli podatki!");
 }
-
+```
 ---
 
 ## 📑 Obsežno logiranje vseh dogodkov
@@ -166,7 +165,7 @@ Sistem zapisuje vsak dogodek, ki vključuje:
   "power": 4820,
   "timestamp": "2023-11-15T14:23:45Z"
 }
-
+```
 ### ✅ Normalno stanje
 
 ```json
@@ -175,7 +174,7 @@ Sistem zapisuje vsak dogodek, ki vključuje:
   "power": 4200,
   "timestamp": "2023-11-15T14:25:30Z"
 }
-
+```
 ## 🛠️ Konfiguracija
 
 | Parameter              | Vrednost | Opis                           |
