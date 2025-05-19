@@ -195,8 +195,9 @@ Sistem zapisuje vsak dogodek, ki vključuje:
    - ✅ Ponastavi vse *emergency flag-e*
    - 📝 Zabeleži dogodek v dnevnik
 ___
+
 Koda funkcije:
-```javascript
+``` javascript
 // === Upravljanje napajanja v sili ===
 const phase3 = parseFloat(msg.payload) || 0; // Pridobi podatke iz vhodnega noda in jih shrani v phase3.
 const lastEmergencyTime = flow.get('lastEmergencyTime') || 0;
@@ -472,9 +473,10 @@ Flow vključuje tudi `inject` node, ki vsakih **5 sekund** pošlje `force_refres
 ## 🔚 Zaključek
 
 Ta flow omogoča **dinamično in varno upravljanje gospodinjskih aparatov**, prilagojeno prisotnosti stanovalcev in trenutnim energetskim razmeram. Primeren je za okolja, kjer je **omejena priključna moč** in je potrebno pazljivo načrtovanje vklopov večjih porabnikov.
+___
 
 Koda funkcije
-___javascript
+```javascript
 // ===== FUNKCIJA PRALNO-SUŠILNI STROJ =====
 // Izhodi:
 // [0] Izklop sušilnega stroja
@@ -569,7 +571,7 @@ if (porabaFaze3 <= maxPoraba) {
 
 // Če pridemo do sem, vrni prazne izhode
 return [null, null, null, null];
-___
+```
 ***
 
 # 📅 Popravljeno: 08.05.2025
