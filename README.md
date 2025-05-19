@@ -583,11 +583,340 @@ return [null, null, null, null];
 [20250519-Bojler flows.zip](https://github.com/user-attachments/files/20281763/20250519-Bojler.flows.zip)
 
 ___
+# ♨️ Bojler Flow - Avtomatsko upravljanje
+
+## 🌟 Opis flow-a
+Ta Node-RED flow avtomatsko upravlja delovanje bojlerja glede na:
+- Trenutno porabo energije (`sensor.me_bo_current_consumption`)
+- Stanje stikala (`switch.me_bo`)
+- Emergency stanje sistema
+
+### 📊 Komponente flow-a
+
+1. **`server-state-changed` node**  
+   - 👁️ Sledi spremembam porabe bojlerja (`sensor.me_bo_current_consumption`)
+   - 🔄 Pošilja podatke ob vsaki spremembi
+   - 📦 Nastavi:
+     - `msg.payload`: trenutna poraba (W)
+     - `msg.topic`: ime senzorja
+
+2. **`inject` node**  
+   - ⏲️ Vsakih 5 minut pošlje signal za osvežitev podatkov
+   - 🔄 Zagotavlja redno posodabljanje stanja
+
+3. **`function` node "Funkcija bojler"**  
+   - 🧠 Glavna logična enota (opisana spodaj)
+   - ⚠️ Ima dva izhoda:
+     - Vklop bojlerja
+     - Izklop bojlerja
+
+4. **`api-call-service` node**  
+   - 🏗️ Izvaja ukaze v Home Assistant:
+     - Vklop (`turn_on`)
+     - Izklop (`turn_off`)
+
+## ⚙️ Podrobnosti delovanja funkcije
+
+### 🔄 Inicializacija
+```javascript
+// Inicializacija globalnih spremenljivk
+if (global.get('boilerPower') === undefined) global.set('boilerPower', 0);
+if (global.get('boilerSwitchState') === undefined) global.set('boilerSwitchState', 'off');
+if (global.get('phase3') === undefined) global.set('phase3', 0);
+```
+
+# ♨️ Podrobna razlaga delovanja bojler flow-a
+
+## 🔍 Obdelava vhodnih podatkov
+
+### ⚡ Poraba energije
+```javascript
+if (msg.topic === 'sensor.me_bo_current_consumption') {
+  const poraba = parseFloat(msg.payload) || 0;
+  global.set('boilerPower', poraba);
+  posodobiBoilerStatus();
+}
+```
+
+Preverja sporočila s tematiko porabe energije
+
+Pretvori vrednost v število (0 če napaka)
+
+Shrani v globalno spremenljivko `boilerPower`
+
+Avtomatsko posodobi status bojlerja
+
+# ♨️ Podrobna razlaga delovanja bojler flow-a
+
+## 🔘 Stanje stikala
+```javascript
+else if (msg.topic === 'switch.me_bo' && ['on','off'].includes(msg.payload)) {
+  global.set('boilerSwitchState', msg.payload);
+  posodobiBoilerStatus();
+}
+```
+
+# ♨️ Upravljanje Bojlerja v Node-RED
+
+Ta skripta obdeluje spremembe stanja stikala za bojler ter avtomatsko upravlja njegovo delovanje na podlagi porabe električne energije in zaščitnih mehanizmov.
+
+---
+
+## ✅ Veljavna stanja
+
+Sprejeta stanja stikala:
+
+- `on`
+- `off`
+
+---
+
+## 🔁 Sinhronizacija stanja
+
+Ob vsaki spremembi:
+
+- Se **posodobi globalna spremenljivka** `boilerSwitchState`
+- Sproži se **ponovno izračunavanje statusa** bojlerja
+
+---
+
+## 📊 Debug izpis
+
+```javascript
+const debugMsg = `♨️ STANJE BOJLERJA
+┌
+│  🏷️ STIKALO    ${global.get('boilerSwitchState').toUpperCase()} 
+│  🔧 STATUS     ${global.get('boilerState').toUpperCase()}
+│  ⚡ PORABA      ${global.get('boilerPower')}W
+└`;
+node.warn(debugMsg);
+```
+
+# 🔥 Pametno upravljanje bojlerja z Node-RED
+
+Ta logika omogoča varno in učinkovito upravljanje električnega bojlerja v realnem času s pomočjo **Node-RED**, senzorjev porabe in Home Assistant integracije.
+
+---
+
+## 🧩 Prikazuje
+
+- 🔘 **Trenutno stanje stikala** (ON/OFF)
+- 🛠️ **Status bojlerja** (AKTIVEN / neaktiven)
+- ⚡ **Trenutno porabo** v W
+- 🎨 **Uporabo emojijev** za boljšo preglednost v Node-RED konzoli
+
+---
+
+## 🚨 Emergency izklop
+
+```javascript
+if (global.get('emergency_bojler_off') && trenutniPodatki.switchState === 'on') {
+    flow.set('lastBoilerTurnOffTime', Date.now());
+    return [null, { payload: "off" }];
+}
+```
+### Pogoji:
+- `emergency_bojler_off` je `true`
+- Bojler je trenutno **vklopljen**
+
+### Akcije:
+- 🕒 Zabeleži čas izklopa
+- 📴 Pošlje ukaz za izklop
+- 🛡️ Prepreči preobremenitev omrežja
+
+## ⏱️ Avtomatski vklop
+
+```javascript
+if (trenutniPodatki.phase3 <= 2100 && trenutniPodatki.switchState === 'off') {
+    const lastTurnOffTime = flow.get('lastBoilerTurnOffTime') || 0;
+    if (Date.now() - lastTurnOffTime >= 300000) {
+        return [{ payload: "on" }, null];
+    }
+}
+```
+
+### Pogoji:
+- 📉 Poraba faze 3 ≤ **2100W**
+- 🔌 Bojler je izklopljen
+- ⏳ Minilo je **vsaj 5 minut** od zadnjega izklopa
+
+### Akcija:
+- 🔁 Pošlje ukaz za **vklop bojlerja**
+
+## 🛠️ Konfiguracijske nastavitve
+
+| Parameter               | Vrednost   | Opis                                                       |
+|-------------------------|------------|------------------------------------------------------------|
+| `max_dovoljena_poraba`  | 4650 W     | Mejna vrednost za sprožitev emergency režima               |
+| `zaščitni_zamik`        | 5 minut    | Minimalni čas med avtomatskim vklopom po izklopu           |
+| `osveževanje`           | 5 minut    | Interval samodejnega preverjanja podatkov v Node-RED flowu |
+
+## 🌈 Delovni primeri
+
+### 1️⃣ Normalno delovanje
+
+| Pogoj           | Rezultat                |
+|----------------|--------------------------|
+| Poraba ≤ 2100W | ✅ Bojler se lahko vklopi |
+| Poraba > 2100W | ⛔ Bojler ostane izklopljen |
+
+### 2️⃣ Emergency scenarij
+
+- ⚠️ Zaznana **preobremenitev omrežja**
+- `emergency_bojler_off = true`
+- 🔌 Bojler se **takoj izklopi**
+- 🛡️ Omrežna zaščita se **aktivira**
+
+### 3️⃣ Ročno upravljanje
+
+- 👆 Stikalo `switch.me_bo` omogoča **ročno upravljanje**
+- 🔄 Sistem še vedno spoštuje varnostne mehanizme
+- 🔐 Ročno vklopljen bojler bo izklopljen ob emergency pogoju
+
+## 💡 Razširljivost
+
+- ➕ Enostavno dodajanje novih naprav z minimalnimi spremembami v kodi
+- 🧠 Vsa logika temelji na **globalnih spremenljivkah** in osrednjemu nadzoru
+- ⚙️ Sistem se lahko razširi na **večfazne** porabnike ali dodatne scenarije
+
+## 🧪 Diagnostika in testiranje
+
+| Kaj preveriti                          | Orodje / metoda              |
+|----------------------------------------|------------------------------|
+| Stanje `switchState`                   | `debug` node / `node.warn()` |
+| Porabo `phase3`                        | Preveri senzor v HA          |
+| Čas `lastBoilerTurnOffTime`            | Uporabi `flow.get()`         |
+| Vrednost `emergency_bojler_off`        | Preveri z `global.get()`     |
+| Odziv na ročno vklop / izklop stikala  | Spremljaj `switch.me_bo`     |
+
+## 📡 Tehnične zahteve
+
+- ✅ **Node-RED** okolje (verzija 3.x ali višje priporočena)
+- ✅ **Home Assistant** ali drug MQTT strežnik
+- ✅ Aktivni senzorji:
+  - `switch.me_bo` – stikalo za bojler
+  - `sensor.phase3_power` – trenutna poraba faze 3
+
+## 📌 Shema poteka
+
+```
+[Senzorji (MQTT / HA)]
+        │
+        ▼
+[Function Node: Upravljanje bojlerja]
+        │
+   ┌────┴────┐
+   ▼         ▼
+[Stikalo] [Debug / Notification]
+```
+
+## 🔐 Varnostne opombe
+
+- Sistem nikoli ne vklopi bojlerja, če bi to **preseglo porabniški limit**
+- Ročni vklop **ne zaobide varnostnih pogojev**
+- Emergency izklop je **neodvisen od uporabnika** in temelji izključno na senzorjih
+
 
 ___
 
 ___
+Koda funkcije:
+```javascript
+// === BOJLER - AVTOMATSKO UPRAVLJANJE ===
+// Izhodi:
+// [0] Vklop bojlerja
+// [1] Izklop bojlerja
 
+// ===== INICIALIZACIJA GLOBALNIH SPREMENLJIVK NUJO =====
+if (global.get('boilerPower') === undefined) global.set('boilerPower', 0);
+if (global.get('boilerSwitchState') === undefined) global.set('boilerSwitchState', 'off');
+if (global.get('phase3') === undefined) global.set('phase3', 0);
+const maxPoraba = parseFloat(global.get('max_dovoljena_poraba')) || 4650;
+
+// ===== OBDELAVA INJECT OSVEŽEVANJA PODATKOV =====
+if (msg.topic === "force_refresh_boiler") {
+    msg = {
+        payload: {
+            phase3: parseFloat(global.get('phase3')),  // Brez || 0, ker je že inicializiran
+            boilerPower: parseFloat(global.get('boilerPower')),  // Brez || 0
+            switchState: global.get('boilerSwitchState')  // Brez || 'off'
+        },
+        topic: "rocno_osvezeno"
+    };
+    node.warn("🔁 Osvežujem podatke za bojler");
+}
+
+// ===== OBDELAVA VHODNIH PODATKOV =====
+let obdelano = false;
+// Stanje bojlerja
+function posodobiBoilerStatus() {
+    const power = parseFloat(global.get('boilerPower')) || 0;
+    const switchState = global.get('boilerSwitchState');
+    const newStatus = (switchState === 'on' && power > 100) ? 'AKTIVEN' : 'neaktiven';
+    global.set('boilerState', newStatus);
+    return newStatus;
+}
+
+// Obdelava porabe
+if (msg.topic === 'sensor.me_bo_current_consumption') {
+    const poraba = parseFloat(msg.payload) || 0;
+    global.set('boilerPower', poraba);
+    posodobiBoilerStatus(); // Samo enkrat nastavi status
+    obdelano = true;
+} 
+// Obdelava stikala
+else if (msg.topic === 'switch.me_bo' && ['on','off'].includes(msg.payload)) {
+    global.set('boilerSwitchState', msg.payload);
+    posodobiBoilerStatus(); // Samo enkrat nastavi status
+    obdelano = true;
+}
+
+// ===== PRIKAZ TRENUTNEGA STANJA (DEBUG) =====
+const trenutniPodatki = msg.topic === "rocno_osvezeno" ? msg.payload : {
+    phase3: parseFloat(global.get('phase3')) || 0,
+    boilerPower: parseFloat(global.get('boilerPower')) || 0,
+    switchState: global.get('boilerSwitchState') || 'off'
+};
+
+if (msg.topic === "rocno_osvezeno" || obdelano) {
+    const debugMsg = `♨️ STANJE BOJLERJA
+    ┌
+    │  🏷️ STIKALO    ${global.get('boilerSwitchState').toUpperCase()} ${global.get('boilerSwitchState') === 'on' ? '🟢' : '🔴'}
+    │  🔧 STATUS     ${global.get('boilerState').toUpperCase()} ${global.get('boilerState') === 'AKTIVEN' ? '🔴' : '🟢'}
+    │  ⚡ PORABA      ${global.get('boilerPower')}W ${global.get('boilerState') === 'AKTIVEN' ? '🔴' : '🟢'} 
+    └`;
+    node.warn(debugMsg);
+}
+
+// ===== GLAVNA LOGIKA UPRAVLJANJA =====
+
+// 1. EMERGENCY IZKLOP (samo če je globalni flag aktiven)
+if (global.get('emergency_bojler_off') && trenutniPodatki.switchState === 'on') {
+    flow.set('lastBoilerTurnOffTime', Date.now()); // Shrani čas izklopa
+    node.warn(`⛔ EMERGENCY IZKLOP: Poraba=${trenutniPodatki.phase3}W, Stanje=${global.get('boilerState')}`);
+    return [null, { payload: "off" }];
+}
+
+// 2. AVTOMATSKI VKLOP (z 5-minutno zakasnitvijo)
+if (trenutniPodatki.phase3 <= 2100 && trenutniPodatki.switchState === 'off') {
+    const lastTurnOffTime = flow.get('lastBoilerTurnOffTime') || 0;
+    const currentTime = Date.now();
+    const minDelay = 5 * 60 * 1000; // 5 minut v milisekundah
+
+    if (currentTime - lastTurnOffTime >= minDelay) {
+        node.warn(`✅ AVTOMATSKI VKLOP: Poraba ${trenutniPodatki.phase3}W ≤ 2100W`);
+        return [{ payload: "on" }, null];
+    } else {
+        const remainingSec = Math.round((minDelay - (currentTime - lastTurnOffTime)) / 1000);
+        node.warn(`⏳ Zamik vklopa: še ${remainingSec} sekund`);
+        return [null, null];
+    }
+}
+
+// 3. NORMALNO STANJE - brez sprememb
+node.warn("ℹ️ Ohranjam trenutno stanje");
+return [null, null];
+```
 ***
 
 # 📅 Popravljeno: 05.05.2025
