@@ -62,6 +62,39 @@ ___
 ### ✨
 ___
 ### 🧠 Za avtomatizacijo/nadzor uporabljam dodatek Node-red in ne avtomatizacijo predvsem zaradi boljše preglednosi nad potekom avtomatizacije/nadzora.
+***
+# 📅 Dodano: 19.04.2025
+
+Poglejmo porabo pralnega stroja (Me-Ps) in sušilnega stroja (Me-Ss):
+![20250407-Pralni+Sušilni stroj](https://github.com/user-attachments/assets/c604a964-b618-4238-a35a-8e9dd51487e8)
+Prvo je prano belo perilo in nato sušeno zatem je prano pisano perilo in zatemm sušeno.
+
+Pralni stroj (Me-Ps) belo perilo:
+![Pralni stroj-Poraba_90](https://github.com/user-attachments/assets/1dff5deb-5487-4282-99c3-9eb0e13c45a8)
+
+Sušilni stroj (Me-Ss):
+![Sušilni stroj-Poraba](https://github.com/user-attachments/assets/cdeb01aa-58e2-4df0-8f5f-9fe5e89ee58b)
+
+***
+# 📅 Popravljeno: 19.05.2025
+Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem zaradi bolj robustnega nadzora:
+![20250519-pralni in sušilni stroj + emergency flows](https://github.com/user-attachments/assets/22c5115a-28c5-4e82-bd3c-b8688c2b6c65)
+
+
+✍️ Koda v nod-red za prenos: 
+[20250519-pralni in sušilni stroj + emergency flows.zip](https://github.com/user-attachments/files/20280628/20250519-pralni.in.susilni.stroj.%2B.emergency.flows.zip)
+
+___
+Ta zavihek vsebuje dva toka (flow-a). Čisto zgoraj je tok, ki skrbi za nadzor delovanja nad vsemi napravami gled na njihovo porabo in skupno porabo (opisano kasnjeje podrobneje), spodnji tok pa skrbi za delovanje pralnega in sušilnega stroja s pomočjo zgornjega toka, ki skrbi za delovanje tudi drugih naprav, ki jih bom opisal kasneje
+___
+
+___
+
+___
+
+___
+
+***
 
 # 📅 Popravljeno: 08.05.2025
 💡 Primer za bojler ki ima najnižjo prioriteto delovanja (se prvi izklaplja).
@@ -738,107 +771,7 @@ input_number:
 
 ***
 
-# 📅 Dodano: 19.04.2025
 
-Poglejmo porabo pralnega stroja (Me-Ps) in sušilnega stroja (Me-Ss):
-![20250407-Pralni+Sušilni stroj](https://github.com/user-attachments/assets/c604a964-b618-4238-a35a-8e9dd51487e8)
-Prvo je prano belo perilo in nato sušeno zatem je prano pisano perilo in zatemm sušeno.
-
-Pralni stroj (Me-Ps) belo perilo:
-![Pralni stroj-Poraba_90](https://github.com/user-attachments/assets/1dff5deb-5487-4282-99c3-9eb0e13c45a8)
-
-Sušilni stroj (Me-Ss):
-![Sušilni stroj-Poraba](https://github.com/user-attachments/assets/cdeb01aa-58e2-4df0-8f5f-9fe5e89ee58b)
-
-***
-# 📅 Popravljeno: 08.05.2025
-Po tehtnem premisleku sem se lotil tudi nadzora nad pralnim in sušilnim strojem zaradi bolj robustnega nadzora:
-![Pralno sušilni stroj](https://github.com/user-attachments/assets/47490788-de2f-42fc-a741-6a06a8905352)
-
-✍️ Koda v nod-red za prenos: 
-[20250508-pralni in sušilni stroj flows.zip](https://github.com/user-attachments/files/20099732/20250508-pralni.in.susilni.stroj.flows.zip)
-
-// Funkcijska koda za prioritizirano upravljanje porabe energije v Node-RED okolju
-
-## Namen
-Koda upravlja več energetsko zahtevnih naprav v gospodinjstvu z namenom:
-- Preprečevanje preobremenitve električnega omrežja (faza 3)
-- Optimizacija porabe energije
-- Avtomatsko vklopanje/izklopanje naprav glede na razpoložljivo moč
-- Zagotavljanje varnostnih mehanizmov
-
-## Vhodni podatki
-- `msg.payload`: Vrednost porabe energije (v W) ali stanje naprave
-- `msg.topic` ali `msg.data.entity_id`: Identifikator vira podatkov:
-  - 'sensor.p1_meter_power_phase_3' - poraba faze 3
-  - 'sensor.me_prst_current_consumption' - poraba pralnega stroja
-  - 'sensor.me_ss_current_consumption' - poraba sušilnega stroja
-  - 'switch.me_ps' - stanje pralnega stroja
-  - 'switch.me_ss' ali 'switch.me_ss_switch_0' - stanje sušilnega stroja
-
-## Izhodi
-[0] Izklop sušilnega stroja
-[1] Izklop pralnega stroja
-[2] Vklop pralnega stroja
-[3] Vklop sušilnega stroja
-[4] Izklop bojlerja
-[5] Izklop IR Nathalie
-[6] Izklop IR spalnica
-[7] Izklop IR Diane
-
-## Delovanje
-
-### 1. Shranjevanje podatkov
-- Vrednosti se shranjujejo v flow spremenljivke:
-  - 'poraba_faze3' - trenutna poraba faze 3
-  - 'pralni_poraba' - poraba pralnega stroja
-  - 'susilni_poraba' - poraba sušilnega stroja
-  - 'pralni_stanje' - stanje pralnega stroja
-  - 'susilni_stanje' - stanje sušilnega stroja
-
-### 2. Branje globalnih stanj
-- Preverja stanje in porabo drugih naprav:
-  - Bojler
-  - IR paneli (Nathalie, spalnica, Diane)
-
-### 3. Določanje statusov naprav
-Naprava je "AKTIVNA" če:
-- Je vklopljena ('on')
-- Poraba presega mejne vrednosti:
-  - Pralni stroj: >120W
-  - Sušilni stroj: >240W
-  - Bojler: >100W
-  - IR paneli: >100W
-
-### 4. Emergency logika (ko je poraba >4650W)
-Zaporedje izklopov po prioriteti:
-1. Bojler
-2. IR paneli (Nathalie → spalnica → Diane)
-3. Sušilni stroj
-4. Pralni stroj
-
-### 5. Normalno delovanje (poraba ≤4650W)
-- Izračuna prosto moč (4650W - trenutna poraba)
-- Vklopi naprave glede na:
-  - Razpoložljivo moč (z rezervo 500W)
-  - Prioriteto (pralni stroj ima prednost)
-  - Zahtevano moč:
-    - Pralni stroj: 1920W + rezerva
-    - Sušilni stroj: 2500W + rezerva
-
-## Varnostne meje
-- Maksimalna dovoljena poraba faze 3: 4650W
-- Minimalna rezerva: 500W
-- Porabe naprav:
-  - Pralni stroj: ~1920W
-  - Sušilni stroj: ~2500W
-
-## Debug izpis
-Podroben pregled stanja vseh naprav z vizualnimi indikatorji:
-- Trenutna poraba faze 3
-- Stanje in poraba vseh naprav
-- Status aktivnosti
-***
 
 # 📅 Dodano: 20.04.2025
 
