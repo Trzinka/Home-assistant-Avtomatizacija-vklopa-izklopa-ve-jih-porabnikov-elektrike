@@ -574,62 +574,21 @@ return [null, null, null, null];
 ```
 ***
 
-# 📅 Popravljeno: 08.05.2025
+# 📅 Popravljeno: 19.05.2025
 💡 Primer za bojler ki ima najnižjo prioriteto delovanja (se prvi izklaplja).
-![Bojler](https://github.com/user-attachments/assets/c5e84dd2-7bfe-4405-970b-0ad3444eb953)
-
+![20250519-Bojler flows](https://github.com/user-attachments/assets/aa6b5113-5e29-4a37-ae4d-48c07741607c)
 
 
 ✍️ Koda v nod-red za prenos: 
-[20250508-Bojler flows.zip](https://github.com/user-attachments/files/20099574/20250508-Bojler.flows.zip)
-
-// Funkcijska koda za upravljanje bojlerja v Node-RED okolju
-
-## Namen
-Koda upravlja stanje električnega bojlerja na podlagi trenutne porabe energije in stanja faze 3. Glavni cilj je optimizirana poraba energije in preprečevanje preobremenitve.
-
-## Vhodni podatki
-- `msg.payload`: Vrednost porabe energije (v W) ali stanje stikala
-- `msg.topic`: Identifikator vira podatkov:
-  - 'sensor.me_bo_current_consumption' - poraba bojlerja
-  - 'sensor.p1_meter_power_phase_3' - poraba faze 3
-  - 'switch.me_bo' - stanje stikala bojlerja
-
-## Delovanje
-
-### 1. Shranjevanje vrednosti
-- Vrednosti se shranjujejo v globalne spremenljivke glede na topic:
-  - 'mebo' in 'boilerPower' - trenutna poraba bojlerja
-  - 'phase3' - poraba faze 3
-  - 'boilerSwitchState' - stanje stikala ('on'/'off')
-
-### 2. Določanje statusa bojlerja
-- Če je stikalo izklopljeno ('off'), je status 'off'
-- Če je stikalo vklopljeno, je status:
-  - 'AKTIVEN' če poraba presega 100W
-  - 'neaktiven' če poraba je ≤ 100W
-
-### 3. Debug izpis
-- Izpisuje podrobno stanje sistema v konzolo z vizualnimi indikatorji:
-  - Stanje stikala
-  - Porabo bojlerja
-  - Status bojlerja
-  - Skupno porabo faze 3
-
-### 4. Logika upravljanja
-- **Vklop bojlerja**: Če je poraba faze 3 ≤ 2100W in je stikalo izklopljeno
-- **Izklop bojlerja**: Če je poraba faze 3 > 4650W in je stikalo vklopljeno
-
-## Izhodi
-- Prvi izhod: Pošlje ukaz 'on' za vklop bojlerja
-- Drugi izhod: Pošlje ukaz 'off' za izklop bojlerja
-- Če pogoji niso izpolnjeni, vrne [null, null]
-
-## Varnostne meje
-- Varna poraba faze 3: ≤ 4650W (izklop ob presežku)
-- Optimalni pogoji za vklop: ≤ 2100W
+[20250519-Bojler flows.zip](https://github.com/user-attachments/files/20281763/20250519-Bojler.flows.zip)
 
 ___
+
+___
+
+___
+
+***
 
 # 📅 Popravljeno: 05.05.2025
 💡 Primer za IR panel (ogrevanje):
