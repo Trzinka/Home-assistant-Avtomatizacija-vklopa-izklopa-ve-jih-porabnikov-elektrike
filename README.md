@@ -1,3 +1,7 @@
+## 📜 Licenca  
+Ta dela so prosto dostopna za vsako uporabo brez omejitev.  
+Avtor ne zahteva atribucije, vendar je hvaležen za povratne informacije.
+
 # 🐣 Projekt v razvoju
 ___
 
@@ -888,6 +892,4 @@ Zakaj je to pomembno?
 🌍 Model za sodelovanje človek-AI v manj zastopanih jezikih
 ⚡ Navdih za energetsko avtomatizacijo v drugih regijah
 
-# 📜 Licenca  
-Ta dela so prosto dostopna za vsako uporabo brez omejitev.  
-Avtor ne zahteva atribucije, vendar je hvaležen za povratne informacije.
+
