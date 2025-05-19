@@ -50,6 +50,11 @@ Najprej sem moral rešiti dilemo glede uporabe električne pečice, pralnega str
 Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje bojler se mi dozdeva, da te naprave lahko brez večjega vpliva ob špicah izklapljam.
 
 
+Najprej sem moral rešiti dilemo glede uporabe električne pečice, pralnega stroja in sušilnega stroja. Z ženo sva se dogovorila 😄, da istočasno ne vklapljava teh naprav, tukaj pride v poštev tudi, friteza, mikrovalovna, fen za lase (opremljena so s pametnimi stikali ali pa vsaj z merilniki porabe) in še kaj se bi našlo.
+
+Glede na to, da imamo prostore ogrevane s pomočjo IR panelov in da vodo greje bojler se mi dozdeva, da te naprave lahko brez večjega vpliva ob špicah izklapljam.
+
+
 # Nekaj podatkov o porabnikih
 ___
 | Naprava        | Poraba |
@@ -57,14 +62,17 @@ ___
 | Sušilni stroj  | 2,5 kW |
 | Pralni stroj   | 1,8 kW |
 | Bojler         | 2,0 kW |
-| Štedilnik      |        |
-| Mikrovalovna   |        |
+| Pečica         | 2,0 kW |
+| Mikrovalovna   | 1,8 kW |
 | Likalnik       | 2,2 kW |
 | Fen za lase    | 2,4 kW |
 | IR Nati        | 0,6 kW |
 | IR Spalnica    | 1,2 kW |
 | IR Di          | 0,7 kW |
-___
+___ 
+
+Upoštevana je maksimalna poraba ob zagonu naprave,ki je nekoliko višja koz kasneje nadaljevanj
+
 📊 Ugotovil sem, da je nekje stalna poraba okoli 500 W (hladilnik, skrinja, tv, glavni računalnik ...) tako, da čisto v skrajnost ne mislim iti!
 ![20250414-Floor plan](https://github.com/user-attachments/assets/b1559d97-85c4-457c-8a4b-35c9410fabea)
 
