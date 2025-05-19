@@ -929,7 +929,112 @@ return [null, null];
 [20250519-IR Spalnica flows.zip](https://github.com/user-attachments/files/20283835/20250519-IR.Spalnica.flows.zip)
 
 ___
-// Funkcijska koda za upravljanje IR ogrevanja v spalnici v Node-RED okolju
+# 🛏️ IR Spalnica - Avtomatsko upravljanje ogrevanja
+
+## 🌟 Opis flow-a
+Ta Node-RED flow avtomatsko upravlja IR ogrevalni panel v spalnici glede na:
+- Temperaturo v prostoru
+- Prisotnost uporabnikov
+- Stanje oken in vrat
+- Porabo električne energije
+
+## 📊 Komponente flow-a
+
+### 🎚️ Vhodni senzorji
+1. **Temperatura** (`sensor.povprecje_temperature_spalnica`)
+2. **Prisotnost** (`binary_sensor.tpl_occupancy`)
+3. **Okna** (`sensor.so_sp_st`)
+4. **Vrata** (`binary_sensor.sv_sp_door`)
+5. **Poraba energije** (`sensor.tm_sp_current_consumption`)
+
+### 🎛️ Izhodne akcije
+- `switch.tm_sp` - Vklop/izklop IR panelov
+
+## ⚙️ Podrobnosti delovanja
+
+### 🌡️ Temperaturno upravljanje
+```javascript
+const temperaturaSp = parseFloat(flow.get('temp_sp') || 0);
+const histereza = 1.0;
+```
+- **Vklop**: ≤20.5°C  
+- **Izklop**: ≥21.5°C  
+- Histereza: 1.0°C  
+
+### 👥 Prisotnost
+```javascript
+const prisotnostSp = flow.get('prisotnost_sp') || false;
+```
+Ogrevanje deluje samo, ko je nekdo prisoten
+
+### 🪟 Stanje oken in vrat
+```javascript
+const oknoZaprtoSp = flow.get('okno_sp') || false;
+const vrataZaprtaSp = flow.get('vrata_sp') || false;
+```
+Ogrevanje deluje samo pri zaprtih okenih in vratih
+
+### ⚡ Emergency režim
+```javascript
+const emergencyBlokada = global.get('emergency_irSp_off') || false;
+```
+Avtomatski izklop ob prekoračitvi moči (4650W)
+
+## 📜 Glavna logika
+
+### ✅ Pogoji za vklop
+```javascript
+const pogojiZaVklop = !emergencyBlokada && 
+                     temperaturaSp <= 20.5 && 
+                     prisotnostSp && 
+                     oknoZaprtoSp && 
+                     vrataZaprtaSp;
+```
+
+### ⛔ Pogoji za izklop
+```javascript
+const pogojiZaIzklop = temperaturaSp >= 21.5 || 
+                      !prisotnostSp || 
+                      !oknoZaprtoSp || 
+                      !vrataZaprtaSp;
+```
+
+## 🛠️ Konfiguracija
+| Parameter | Vrednost | Opis |
+|-----------|----------|-------|
+| `max_dovoljena_poraba` | 4650W | Meja za emergency |
+| `minCasMedVklopi` | 5 min | Zaščitni zamik |
+
+## 📊 Debug izpis
+```javascript
+const debugIzpis = `
+┏  
+┃  🌡️ Temperatura: ${temperaturaSp.toFixed(1)}°C  
+┃  ${temperaturaSp <= 20.5 ? '✅ Pod mejo' : '❌ Nad mejo'}
+┃  👥 Prisotnost: ${prisotnostSp ? '✅ Prisotni' : '❌ Odsotni'}  
+┃  🔲 Okno: ${oknoZaprtoSp ? '✅ Zaprto' : '❌ Odprto'}  
+┃  🚪 Vrata: ${vrataZaprtaSp ? '✅ Zaprta' : '❌ Odprta'}  
+┗`;
+```
+
+## 🌈 Delovni primeri
+
+### 1. Normalno delovanje
+```mermaid
+graph TD
+    A[Temperatura ≤20.5°C] --> B[Vklop IR]
+    B --> C[Temperatura ≥21.5°C]
+    C --> D[Izklop IR]
+```
+
+### 2. Emergency scenarij
+```mermaid
+graph TD
+    A[Prekoračitev moči] --> B[Emergency izklop]
+    B --> C[Ohlajanje]
+```
+
+💡 **Opomba**: Sistem vsakih 5 sekund samodejno osveži vse parametre.
 ___
 
 Koda funkcije:
