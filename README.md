@@ -195,7 +195,131 @@ Sistem zapisuje vsak dogodek, ki vključuje:
    - ✅ Ponastavi vse *emergency flag-e*
    - 📝 Zabeleži dogodek v dnevnik
 ___
+Koda funkcije:
+```javascript
+// === Upravljanje napajanja v sili ===
+const phase3 = parseFloat(msg.payload) || 0; // Pridobi podatke iz vhodnega noda in jih shrani v phase3.
+const lastEmergencyTime = flow.get('lastEmergencyTime') || 0;
+const currentTime = Date.now();
 
+// NASTAVITEV IN POSODOBITEV GLOBALNE SPREMENLJIVKE (ker je to edini vir podatkov)
+global.set('phase3', phase3);  // Nastavitev globalnega objekta pod imenom phase3
+global.set('last_phase3_update', currentTime);  // Za sledenje svežini podatkov
+global.set('max_dovoljena_poraba', 4650); // Privzeta vrednost za maksimalno dovoljeno energijo
+
+// Določi prioritetno zaporedje izklopov
+const emergencySequence = [
+    'bojler',
+    'irNa',
+    'irSp', 
+    'irDi',
+    'susilni',
+    'pralni'
+];
+
+// Preveri svežost podatkov
+if (currentTime - (global.get('last_phase3_update') || 0) > 10000) {
+    node.warn("⚠️ OPOZORILO: Podatki phase3 niso sveži!");
+}
+// Nastavitev konstante za maksimalno dovoljeno energijo
+const maxPoraba = parseFloat(global.get('max_dovoljena_poraba')) || 4650; 
+// Pridobi VSE potrebne gobalne vrednosti in status iz drugih zavihkov in flowov v njih
+const boilerState = global.get('boilerState') || 'off';  // Stanje bojlerja
+const boilerPower = parseFloat(global.get('boilerPower') || 0);  // Poraba energije bojlerja
+const pralniStanje = global.get('pralni_stanje') || 'off';
+const pralniPoraba = parseFloat(global.get('pralni_poraba') || 0);
+const susilniStanje = global.get('susilni_stanje') || 'off';
+const susilniPoraba = parseFloat(global.get('susilni_poraba') || 0);
+// IR panelei
+const irNaState = global.get('irSwitchState_na') || 'off';
+const irNaPoraba = parseFloat(global.get('irPoraba_na') || 0);
+const irSpState = global.get('irSwitchState_sp') || 'off';
+const irSpPoraba = parseFloat(global.get('irPoraba_sp') || 0);
+const irDiState = global.get('irSwitchState_di') || 'off';
+const irDiPoraba = parseFloat(global.get('irPoraba_di') || 0);
+// V emergency funkciji ohranite obstoječe
+const activeDevices = {irSp: global.get('irSpStatus') === 'AKTIVEN'};
+
+// Pripravi debug sporočilo
+const debugMsg = `
+⚡️ STANJE URGENCE ⚡️
+┏
+┃ 🔌 Faza 3: ${phase3}W ${phase3 <= maxPoraba ? '✅' : '❌'} (meja: ${maxPoraba})
+┃ ♨️ Bojler: ${boilerState.toUpperCase()} ${boilerPower}W ${boilerState === 'AKTIVEN' ? '🔴' : '🟢'}
+┃ 🌞 IR Nathalie: ${irNaState.toUpperCase()} ${irNaPoraba}W ${irNaPoraba > 100 ? '🔴' : '🟢'}
+┃ 🛏️ IR Spalnica: ${irSpState.toUpperCase()} ${irSpPoraba}W ${irSpPoraba > 100 ? '🔴' : '🟢'}
+┃ 👧 IR Diane: ${irDiState.toUpperCase()} ${irDiPoraba}W ${irDiPoraba > 100 ? '🔴' : '🟢'}
+┃ 🧺 Pralni: ${pralniStanje.toUpperCase()} ${pralniPoraba}W ${pralniPoraba > 120 ? '🔴' : '🟢'}
+┃ 🔥 Sušilni: ${susilniStanje.toUpperCase()} ${susilniPoraba}W ${susilniPoraba > 240 ? '🔴' : '🟢'}
+┗
+${phase3 > maxPoraba ? '🚨 PREKORAČITEV MOČI!' : '✅ Normalna poraba'}`;
+
+node.warn(debugMsg);
+
+// Preveri prekoračitev moči
+if (phase3 > maxPoraba) {
+    // Če je prva prekoračitev ali je minilo 5 sekund od zadnje
+    if (currentTime - lastEmergencyTime > 5000) {
+        // Pridobi trenutno aktivne naprave
+        const activeDevices = {
+            bojler: global.get('boilerState') === 'AKTIVEN',
+            irNa: global.get('irNaStatus') === 'AKTIVEN',
+            irSp: global.get('irSpStatus') === 'AKTIVEN',
+            irDi: global.get('irDiStatus') === 'AKTIVEN',
+            susilni: global.get('susilniStatus') === 'AKTIVEN',
+            pralni: global.get('pralniStatus') === 'AKTIVEN'
+        };
+        
+        // Najdi prvo aktivno napravo v zaporedju za izklop
+        const deviceToTurnOff = emergencySequence.find(device => activeDevices[device]);
+        
+        if (deviceToTurnOff) {
+            // Nastavi globalni flag za izklop
+            global.set(`emergency_${deviceToTurnOff}_off`, true);
+            flow.set('lastEmergencyTime', currentTime);
+            
+            node.warn(`⚠️ EMERGENCY: Zahtevan izklop ${deviceToTurnOff}`);
+            
+            // Dodatno sporočilo za debug
+            msg.payload = {
+                event: "EMERGENCY_TRIGGERED",
+                dogodek: "URGENCA_AKTIVIRANA",
+                device: deviceToTurnOff,
+                phase3: phase3,
+                timestamp: new Date(currentTime).toISOString()
+            };
+            
+            return msg;
+        } else {
+            node.warn('ℹ️ EMERGENCY: Vse naprave so že izklopljene');
+        }
+    } else {
+        // Čakamo še na potek 5s zamika za ponovno preverbo
+        const remaining = (5000 - (currentTime - lastEmergencyTime)) / 1000;
+        node.warn(`⏳ EMERGENCY: Čakamo na potek 5s zamika (preostalo: ${remaining.toFixed(1)}s)`);
+    }
+} else {
+    // Ponastavi vse emergency flag-e, če je poraba normalna
+    emergencySequence.forEach(device => {
+        global.set(`emergency_${device}_off`, false);
+    });
+    
+    // Ponastavi števec časa
+    flow.set('lastEmergencyTime', 0);
+    
+    // Debug sporočilo
+    msg.payload = {
+        event: "POWER_NORMALIZED",
+        dogodek: "MOČ_NORMALIZIRANA",
+        phase3: phase3,
+        timestamp: new Date().toISOString()
+    };
+    
+    return msg;
+}
+
+return null;
+```
 ___
 # 🌀 2.) Flow: Avtomatsko upravljanje pralnega in sušilnega stroja
 
@@ -326,10 +450,10 @@ Flow vključuje tudi `inject` node, ki vsakih **5 sekund** pošlje `force_refres
 | `switch.me_ss`        | Stikalo sušilnega stroja                             |
 | `sensor.me_prst...`   | Poraba pralnega stroja                               |
 | `sensor.me_ss...`     | Poraba sušilnega stroja                              |
-| `function` node       | Glavna logika za izklop/vklop/emergency obdelavo    |
+| `function` node       | Glavna logika za izklop/vklop/emergency obdelavo     |
 | `inject` node         | Periodično proži osvežitev                           |
-| `notify.*`            | Pošiljanje obvestil uporabnikom                     |
-| `current-state` node  | Preverjanje ali sta Mojca ali Robert doma           |
+| `notify.*`            | Pošiljanje obvestil uporabnikom                      |
+| `current-state` node  | Preverjanje ali sta Mojca ali Robert doma            |
 
 ---
 
@@ -349,6 +473,103 @@ Flow vključuje tudi `inject` node, ki vsakih **5 sekund** pošlje `force_refres
 
 Ta flow omogoča **dinamično in varno upravljanje gospodinjskih aparatov**, prilagojeno prisotnosti stanovalcev in trenutnim energetskim razmeram. Primeren je za okolja, kjer je **omejena priključna moč** in je potrebno pazljivo načrtovanje vklopov večjih porabnikov.
 
+Koda funkcije
+___javascript
+// ===== FUNKCIJA PRALNO-SUŠILNI STROJ =====
+// Izhodi:
+// [0] Izklop sušilnega stroja
+// [1] Izklop pralnega stroja 
+// [2] Vklop pralnega stroja
+// [3] Vklop sušilnega stroja
+
+// Prisilno osveževanje podatkov preko inject noda
+if (msg.topic === "force_refresh") { // Preveri, ali je tema (topic) dobljenega sporočila enaka nizu "force_refresh".
+    msg.payload = global.get('phase3') || 0; // Prebere globalno vrednost 'phase3' ali vrne 0, če ne obstaja
+    msg.topic = "sensor.p1_meter_power_phase_3"; // Spremeni temo sporočila
+}
+
+// === INICIALIZACIJA ===
+const currentValue = parseFloat(msg.payload) || 0;
+const entityId = msg.topic || (msg.data && msg.data.entity_id) || (msg._event && msg._event.entity_id);  // Prepoznati, katera naprava/entiteta je poslala podatek.
+const maxPoraba = parseFloat(global.get('max_dovoljena_poraba')) || 4650;
+
+// === SHRAJEVANJE PODATKOV GLEDE NA ENTITETO ===
+if (entityId === 'sensor.me_prst_current_consumption') {
+    flow.set('pralni_poraba', currentValue);  // Shrani v flow
+    global.set('pralni_poraba', currentValue);  // Shrani v globalno spremenljivko
+} 
+else if (entityId === 'sensor.me_ss_current_consumption') {
+    flow.set('susilni_poraba', currentValue);
+    global.set('susilni_poraba', currentValue);
+} 
+else if (entityId === 'switch.me_ps') {
+    flow.set('pralni_stanje', msg.payload);
+    global.set('pralni_stanje', msg.payload);
+} 
+else if (entityId === 'switch.me_ss' || entityId === 'switch.me_ss_switch_0') {
+    flow.set('susilni_stanje', msg.payload);
+    global.set('susilni_stanje', msg.payload);
+}
+
+// === BRANJE TRENUTNIH STANJ ===
+const porabaFaze3 = parseFloat(global.get('phase3')) || 0; // Globalna spremenljivka
+global.set('last_phase3_update', Date.now());  // Shrani se čas osvežitve
+const pralniPoraba = parseFloat(flow.get('pralni_poraba')) || 0;
+const susilniPoraba = parseFloat(flow.get('susilni_poraba')) || 0;
+const pralniStanje = flow.get('pralni_stanje') || 'off';
+const susilniStanje = flow.get('susilni_stanje') || 'off';
+
+// === DOLOČANJE STATUSOV  IN LEPŠI PRIKAZ V DEBUG ===
+const pralniStatus = (pralniStanje === 'on' && pralniPoraba > 120) ? '🔴 AKTIVEN' : '🟢 neaktiven';
+const susilniStatus = (susilniStanje === 'on' && susilniPoraba > 240) ? '🔴 AKTIVEN' : '🟢 neaktiven';
+
+// Preverjanje svežosti podatkov
+const lastUpdate = global.get('last_phase3_update') || 0;
+if (Date.now() - lastUpdate > 10000) {
+    node.warn("⚠️ OPOZORILO: Globalni podatki niso sveži!");
+}
+
+// === EMERGENCY LOGIKA ZA IZKLOP===
+const emergencyPralniOff = global.get('emergency_pralni_off') || false;
+const emergencySusilniOff = global.get('emergency_susilni_off') || false;
+// EMERGENCY FUNKCIJA IZKLOPI PRALNI STROJ
+if (emergencyPralniOff && pralniStanje === 'on') {
+    node.warn('⛔ EMERGENCY: Izklop pralnega stroja');
+    return [null, { payload: "off" }, null, null];
+}
+// EMERGENCY FUNKCIJA IZKLOPI SUŠILNI STROJ
+if (emergencySusilniOff && susilniStanje === 'on') {
+    node.warn('⛔ EMERGENCY: Izklop sušilnega stroja');
+    return [{ payload: "off" }, null, null, null];
+}
+
+// === NORMALNO DELOVANJE PONOVNI VKLOP PO POTREBI ===
+if (porabaFaze3 <= maxPoraba) {
+    // Reset emergency stanja
+    flow.set('lastEmergencyAlert', 0);
+    
+    const prostaMoc = maxPoraba - porabaFaze3;
+    const rezerva = 50;
+    
+    // Pralni stroj ima prednost (1920W + rezerva)
+    if (pralniStanje === 'off' && !pralniStatus.includes('AKTIVEN') && prostaMoc >= (1920 + rezerva)) {
+        node.warn(`✅ AVTOMATSKI VKLOP: Pralni stroj (prosta moč: ${prostaMoc}W)`);
+        return [null, null, { payload: "on" }, null];
+    }
+    // Sušilni stroj (2500W + rezerva)
+    else if (susilniStanje === 'off' && !susilniStatus.includes('AKTIVEN') && prostaMoc >= (2500 + rezerva)) {
+        node.warn(`✅ AVTOMATSKI VKLOP: Sušilni stroj (prosta moč: ${prostaMoc}W)`);
+        return [null, null, null, { payload: "on" }];
+    }
+    else {
+        node.warn(`ℹ️ Ohranjanje stanja (prosta moč: ${prostaMoc}W)`);
+        return [null, null, null, null];
+    }
+}
+
+// Če pridemo do sem, vrni prazne izhode
+return [null, null, null, null];
+___
 ***
 
 # 📅 Popravljeno: 08.05.2025
