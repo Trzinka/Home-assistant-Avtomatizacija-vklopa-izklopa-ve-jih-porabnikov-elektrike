@@ -1145,7 +1145,7 @@ return [null, null];
 ***
 ## Kodo za Nod-red sem naredil s pomočjo deepseek, ki se je izkazal za veliko učinkovitejšega od ChatGPT!
 
-🤝 Kako sva sodelovala s deepseek
+🤝 Kako sva sodelovala s deepseek? 
 Ta projekt je rezultat nekajtedenskega sodelovanja med mano in AI, ki dokazuje, da so kompleksne rešitve dostopne tudi brez predhodnega programerskega znanja:
 
 Ključni elementi uspeha
