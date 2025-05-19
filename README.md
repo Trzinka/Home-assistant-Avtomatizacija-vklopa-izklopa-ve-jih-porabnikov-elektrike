@@ -197,7 +197,274 @@ Sistem zapisuje vsak dogodek, ki vključuje:
 ___
 
 ___
-## 2.) tok (flow)
+# 🌀 2.) Flow: Avtomatsko upravljanje pralnega in sušilnega stroja
+
+## 🔍 Kratek opis
+
+Ta Node-RED flow skrbi za pametno upravljanje **pralnega** in **sušilnega stroja**, glede na:
+
+- trenutno **porabo elektrike**
+- stanje naprav (vklop/izklop)
+- in **emergency logiko**, če pride do presežene skupne porabe (glede na fazo 3)
+
+Cilj sistema je:
+- preprečiti preobremenitev električnega omrežja
+- avtomatsko nadzorovati naprave
+- **obveščati uporabnike** preko mobilne aplikacije Home Assistant companion če sta prisotnosti osebi Mojca ali Robert ob vklopu ali izklopu naprave
+
+---
+
+## 🧠 Glavne komponente
+
+### 🔧 Glavna funkcija (`function` node: "Funkcija PSs")
+
+Ta vozlišče sprejema podatke iz senzorjev porabe in stanja naprav ter izvaja naslednje logike:
+
+- spremlja porabo pralnega in sušilnega stroja
+- beleži stanje (vklop/izklop) pametnega stikala naprav
+- izračuna trenutno porabo faze 3
+- primerja s skupnim dovoljenim limitom (`max_dovoljena_poraba`)
+- izvaja:
+  - **emergency izklop** (če presežena moč)
+  - **avtomatski vklop**, če je na voljo dovolj moči preko prej omenjene funkcije
+
+🧮 Primer konfiguracije:
+
+```javascript
+const maxPoraba = parseFloat(global.get('max_dovoljena_poraba')) || 4650;
+```
+
+---
+
+## 🖥️ Spremljanje stanj
+
+### Entitete, ki sprožijo flow:
+
+- `sensor.me_prst_current_consumption` (poraba pralnega stroja)
+- `sensor.me_ss_current_consumption` (poraba sušilnega stroja)
+- `switch.me_ps` (stanje pametnega stikala pralnega stroja)
+- `switch.me_ss_switch_0` (stanje pametnega stikala sušilnega stroja)
+
+Vse zgornje entitete so povezane z `server-state-changed` vozlišči in priklopljene na glavno funkcijsko vozlišče.
+
+---
+
+## 🔁 Emergency logika
+
+- Če je `global.get('emergency_pralni_off') == true`, se pralni stroj **takoj izklopi**
+- Enako za `emergency_susilni_off` in sušilni stroj- Za izklop skrbi zgornji flow
+- Po izklopu se preveri, ali je uporabnik (Mojca ali Robert) doma
+- Če je prisoten, se mu pošlje **obvestilo preko mobilne aplikacije Home assistant companion**
+
+📦 Obvestilo:
+
+```json
+{
+  "message": "Sušilni stroj se je IZKLOPIL. Prekoračena poraba",
+  "title": "Obvestilo: Sušilni stroj"
+}
+```
+
+---
+
+## 🔔 Obvestila uporabnikom
+
+Obvestila se pošiljajo preko:
+
+- `notify.mobile_app_mojca_mobitel`
+- `notify.mobile_app_robert_mobitel`
+
+### Vsebina vključuje:
+
+- **naslov obvestila** (npr. “Obvestilo: Pralni stroj”)
+- **sporočilo** z dodatnimi podatki o porabi
+- **akcijski gumb**: `Videl sem 👍`
+- različno pomembnost glede na uporabnika (Robert dobi alarm)
+
+---
+
+## 🔄 Avtomatski vklopi
+
+Če skupna poraba pade **pod dovoljeno mejo**, sistem:
+
+1. ponastavi emergency zastavice
+2. preveri stanje naprav
+3. po potrebi **vklopi najprej pralni stroj**, če je na voljo ≥ 1920 W + rezerva
+4. nato šele sušilni stroj, če je na voljo ≥ 2500 W + rezerva
+
+📥 Primer logike za vklop pralnega stroja:
+
+```javascript
+if (pralniStanje === 'off' && !pralniStatus.includes('AKTIVEN') && prostaMoc >= (1920 + rezerva)) {
+    return [null, null, { payload: "on" }, null];
+}
+```
+
+---
+
+## ♻️ Osveževanje podatkov
+
+Flow vključuje tudi `inject` node, ki vsakih **5 sekund** pošlje `force_refresh` sporočilo, da se ponovno prebere trenutna vrednost iz `global.get('phase3')`.
+
+---
+
+## 💾 Pomožne spremenljivke
+
+- `global.phase3` – trenutno stanje porabe na fazi 3
+- `flow.pralni_poraba` in `flow.susilni_poraba` – poraba posameznih naprav
+- `flow.pralni_stanje`, `flow.susilni_stanje` – stanja naprav
+- `global.last_phase3_update` – čas zadnje osvežitve
+- `global.emergency_pralni_off`, `global.emergency_susilni_off` – emergency zastavice
+
+---
+
+## 📋 Povzetek v obliki tabele
+
+| Komponenta            | Opis                                                 |
+|-----------------------|------------------------------------------------------|
+| `switch.me_ps`        | Stikalo pralnega stroja                              |
+| `switch.me_ss`        | Stikalo sušilnega stroja                             |
+| `sensor.me_prst...`   | Poraba pralnega stroja                               |
+| `sensor.me_ss...`     | Poraba sušilnega stroja                              |
+| `function` node       | Glavna logika za izklop/vklop/emergency obdelavo    |
+| `inject` node         | Periodično proži osvežitev                           |
+| `notify.*`            | Pošiljanje obvestil uporabnikom                     |
+| `current-state` node  | Preverjanje ali sta Mojca ali Robert doma           |
+
+---
+
+## 🧪 Primer poteka
+
+1. Poraba naraste nad 4650 W
+2. Flow izklopi sušilni stroj
+3. Če je kdo doma (Mojca/Robert) → prejme obvestilo
+4. Ko poraba pade:
+   - sistem preveri, koliko moči je na voljo
+   - najprej vklopi pralni, nato še sušilni stroj
+   - pošlje obvestilo o ponovnem vklopu
+
+---
+
+## 🔚 Zaključek
+
+Ta flow omogoča **dinamično in varno upravljanje gospodinjskih aparatov**, prilagojeno prisotnosti stanovalcev in trenutnim energetskim razmeram. Primeren je za okolja, kjer je **omejena priključna moč** in je potrebno pazljivo načrtovanje vklopov večjih porabnikov.
+
+---
+
+## 🖥️ Spremljanje stanj
+
+### Entitete, ki sprožijo flow:
+
+- `sensor.me_prst_current_consumption` – poraba pralnega stroja  
+- `sensor.me_ss_current_consumption` – poraba sušilnega stroja  
+- `switch.me_ps` – stanje pralnega stroja  
+- `switch.me_ss_switch_0` – stanje sušilnega stroja  
+
+Vse zgornje entitete so povezane z `server-state-changed` vozlišči in priklopljene na glavno funkcijsko vozlišče.
+
+---
+
+## 🔁 Emergency logika
+
+- Če je `global.get('emergency_pralni_off') == true`, se pralni stroj **takoj izklopi**
+- Enako velja za `emergency_susilni_off` in sušilni stroj
+- Po izklopu se preveri, ali je uporabnik (Mojca ali Robert) doma
+- Če je prisoten, se mu pošlje **obvestilo preko mobilne aplikacije**
+
+📦 Obvestilo:
+
+```json
+{
+  "message": "Sušilni stroj se je IZKLOPIL. Prekoračena poraba",
+  "title": "Obvestilo: Sušilni stroj"
+}
+```
+
+---
+
+## 🔔 Obvestila uporabnikom
+
+Obvestila se pošiljajo preko:
+
+- `notify.mobile_app_mojca_mobitel`
+- `notify.mobile_app_robert_mobitel`
+
+### Vsebina vključuje:
+
+- naslov obvestila (npr. “Obvestilo: Pralni stroj”)
+- sporočilo z dodatnimi podatki o porabi
+- akcijski gumb: **Videl sem 👍**
+- različno pomembnost glede na uporabnika (Robert dobi alarmni kanal)
+
+---
+
+## 🔄 Avtomatski vklopi
+
+Če skupna poraba pade **pod dovoljeno mejo**, sistem:
+
+1. ponastavi emergency zastavice  
+2. preveri stanje naprav  
+3. po potrebi vklopi **najprej pralni stroj**, če je na voljo ≥ 1920 W + rezerva  
+4. nato še **sušilni stroj**, če je na voljo ≥ 2500 W + rezerva  
+
+📥 Primer logike za vklop pralnega stroja:
+
+```javascript
+if (pralniStanje === 'off' && !pralniStatus.includes('AKTIVEN') && prostaMoc >= (1920 + rezerva)) {
+    return [null, null, { payload: "on" }, null];
+}
+```
+
+---
+
+## ♻️ Osveževanje podatkov
+
+Flow vključuje tudi `inject` node, ki vsakih **5 sekund** pošlje `force_refresh` sporočilo, s katerim se ponovno prebere trenutna vrednost iz `global.get('phase3')`.
+
+---
+
+## 💾 Pomožne spremenljivke
+
+- `global.phase3` – trenutno stanje porabe na fazi 3  
+- `flow.pralni_poraba`, `flow.susilni_poraba` – poraba posameznih naprav  
+- `flow.pralni_stanje`, `flow.susilni_stanje` – stanja naprav  
+- `global.last_phase3_update` – čas zadnje osvežitve  
+- `global.emergency_pralni_off`, `global.emergency_susilni_off` – emergency zastavice  
+
+---
+
+## 📋 Povzetek v obliki tabele
+
+| Komponenta           | Opis                                              |
+|----------------------|---------------------------------------------------|
+| `switch.me_ps`       | Stikalo pralnega stroja                           |
+| `switch.me_ss`       | Stikalo sušilnega stroja                          |
+| `sensor.me_prst...`  | Poraba pralnega stroja                            |
+| `sensor.me_ss...`    | Poraba sušilnega stroja                           |
+| `function` node      | Glavna logika za izklop/vklop/emergency obdelavo |
+| `inject` node        | Periodično proži osvežitev                        |
+| `notify.*`           | Pošiljanje obvestil uporabnikom                  |
+| `current-state` node | Preverjanje ali sta Mojca ali Robert doma        |
+
+---
+
+## 🧪 Primer poteka
+
+1. Poraba naraste nad **4650 W**
+2. Flow izklopi **sušilni stroj**
+3. Če je kdo doma (Mojca/Robert) → prejme **obvestilo**
+4. Ko poraba pade:
+   - sistem preveri, koliko moči je na voljo
+   - najprej vklopi **pralni**, nato še **sušilni stroj**
+   - pošlje obvestilo o ponovnem vklopu
+
+---
+
+## 🔚 Zaključek
+
+Ta flow omogoča **dinamično in varno upravljanje gospodinjskih aparatov**, prilagojeno prisotnosti stanovalcev in trenutnim energetskim razmeram. Primeren je za okolja, kjer je **omejena priključna moč** in je potrebno pazljivo načrtovanje vklopov večjih porabnikov.
+
+
 
 
 ***
